@@ -1,0 +1,4 @@
+.*.swp
+config/*/certificates/key/*
+config/*/certificates/trust/*
+charts/*/config

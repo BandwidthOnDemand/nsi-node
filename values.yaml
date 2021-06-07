@@ -1,0 +1,156 @@
+##############################################################################
+#                                                                            #
+# Network Service Interface Distributed Document Service                     #
+#                                                                            #
+##############################################################################
+nsi-dds:
+  enabled: true
+  replicaCount: 1
+  
+  image:
+    registry: docker.io
+    repository: hnstrmprt/nsi-dds
+    pullPolicy: IfNotPresent
+    # tag overrides the image tag whose default is the chart appVersion
+    tag: "1.0.26"
+    home: "/nsi-dds"
+  
+  ports:
+    name: "nsi-dds-api"
+    containerPort: 8401
+    protocol: "TCP"
+  
+  probe:
+    scheme: "HTTPS"
+    path: "/dds/portal"
+    initialDelaySeconds: 0
+    startupProbe:
+      failureThreshold: 100
+      periodSeconds: 3
+  
+  service:
+    type: ClusterIP
+    port: 80
+    internalHttpsPort: 8401
+  
+  config:
+    name: "nsi-dds-config"
+    mountPath: "/config"
+    configFilesGlob: "config/*"
+  
+  cache:
+    name: "nsi-dds-cache"
+    mountPath: "/cache"
+    storage: "1Gi"
+
+##############################################################################
+#                                                                            #
+# Network Service Interface Patch Computation Element                        #
+#                                                                            #
+##############################################################################
+nsi-pce:
+  enabled: true
+
+  replicaCount: 1
+  
+  image:
+    registrey: docker.io
+    repository: hnstrmprt/nsi-pce
+    pullPolicy: IfNotPresent
+    # tag overrides the image tag whose default is the chart appVersion
+    tag: "2.0.4"
+    home: "/nsi-pce"
+  
+  ports:
+    name: "nsi-pce-api"
+    containerPort: 8080
+    protocol: "TCP"
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  config:
+    name: "nsi-pce-config"
+    mountPath: "/nsi-pce/config"
+    configFilesGlob: "config/*"
+
+##############################################################################
+#                                                                            #
+# Network Service Interface Safnari Aggregator                               #
+#                                                                            #
+##############################################################################
+nsi-safnari:
+  enabled: true
+  
+  replicaCount: 1
+  
+  image:
+    registry: docker.io
+    repository: hnstrmprt/nsi-safnari
+    pullPolicy: IfNotPresent
+    # tag overrides the image tag whose default is the chart appVersion
+    tag: "2.1.3.3"
+  
+  ports:
+    name: "nsi-safnari-api"
+    containerPort: 8080
+    probePort: 8080
+    protocol: "TCP"
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  config:
+    name: "nsi-safnari-config"
+    mountPath: "/config"
+    configFilesGlob: "config/*"
+  
+  postgresql:
+    postgresqlUsername: nsi-safnari-user
+    postgresqlPassword: password
+    postgresqlDatabase: nsi-safnari
+    image:
+      tag: 9.6.21
+    persistence:
+      size: 1Gi
+    resources:
+      requests:
+        memory: 500Mi
+    volumePermissions:
+      enabled: true
+
+##############################################################################
+#                                                                            #
+# Network Service Interface envoy front-end proxy                            #
+#                                                                            #
+##############################################################################
+nsi-envoy:
+  enabled: true
+
+  replicaCount: 1
+  
+  image:
+    repository: hnstrmprt/nsi-envoy
+    pullPolicy: IfNotPresent
+    # tag overrides the image tag whose default is the chart appVersion
+    tag: "1.17.4"
+  
+  ports:
+    name: "nsi-envoy"
+    containerPort: 8080
+    probePort: 8081
+    protocol: "TCP"
+  
+  service:
+    type: LoadBalancer
+    port: 443
+    ipAddress: 145.101.126.222
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  
+  config:
+    name: "nsi-envoy-config"
+    mountPath: "/opt/bitnami/envoy/conf"
+    configFilesGlob: "config/*"

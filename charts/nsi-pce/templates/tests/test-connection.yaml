@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "nsi-pce.fullname" . }}-test-connection"
+  labels:
+    {{- include "nsi-pce.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "nsi-pce.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

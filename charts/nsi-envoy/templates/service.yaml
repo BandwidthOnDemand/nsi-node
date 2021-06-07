@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nsi-envoy.fullname" . }}
+  labels:
+    {{- include "nsi-envoy.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  externalTrafficPolicy: Local
+  loadBalancerIP: {{ .Values.service.ipAddress }}
+  ports:
+    - port: 443
+      targetPort: {{ .Values.ports.containerPort }}
+      protocol: TCP
+      name: https
+  selector:
+    {{- include "nsi-envoy.selectorLabels" . | nindent 4 }}

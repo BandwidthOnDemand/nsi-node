@@ -1,0 +1,119 @@
+# Default values for nsi-dds.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  registry: docker.io
+  repository: hnstrmprt/nsi-dds
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  # tag: "1.0.4.1"
+  home: "/nsi-dds"
+
+ports:
+  name: "nsi-dds-api"
+  containerPort: 8401
+  protocol: "TCP"
+
+probe:
+  scheme: "HTTPS"
+  path: "/dds/portal"
+  initialDelaySeconds: 0
+  startupProbe:
+    failureThreshold: 100
+    periodSeconds: 3
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  name: nsi-dds
+  type: ClusterIP
+  port: 80
+  internalHttpsPort: 8401
+#service:
+#  name: nsi-dds
+#  type: LoadBalancer
+#  port: 443
+#  internalHttpsPort: 8401
+#  ipAddress: 145.101.126.224
+#  annotations:
+#    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx-development
+    nginx.ingress.kubernetes.io/rewrite-target: /dds/$1
+    nginx.ingress.kubernetes.io/whitelist-source-range: 195.169.126.0/23,145.101.126.0/24,145.145.2.81/32,145.144.240.0/24
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    # # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: api.dev.automation.surf.net
+      paths: 
+        - path: "/nsi-dds/(.*)"
+  tls:
+    - secretName: tls-secret-api
+      hosts:
+        - api.dev.automation.surf.net
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  name: "nsi-dds-config"
+  mountPath: "/config"
+  configFilesGlob: "config/*"
+
+cache:
+  name: "nsi-dds-cache"
+  mountPath: "/cache"
+  storage: "1Gi"

@@ -1,0 +1,19 @@
+apiVersion: v2
+name: nsi-node
+description: Deploy a Network Service Interface node
+type: application
+version: 0.0.1
+
+dependencies:
+  - name: nsi-dds
+    version: "> 0.0.0"
+    condition: nsi-dds.enabled
+  - name: nsi-pce
+    version: "> 0.0.0"
+    condition: nsi-pce.enabled
+  - name: nsi-safnari
+    version: "> 0.0.0"
+    condition: nsi-safnari.enabled
+  - name: nsi-envoy
+    version: "> 0.0.0"
+    condition: nsi-envoy.enabled
