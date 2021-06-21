@@ -1,0 +1,13 @@
+  - name: safnari_cluster
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: safnari_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: nsi-node-nsi-safnari.nsi.svc.cluster.local
+                port_value: 80
