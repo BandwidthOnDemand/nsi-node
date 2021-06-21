@@ -12,7 +12,7 @@ nsi-dds:
     repository: hnstrmprt/nsi-dds
     pullPolicy: IfNotPresent
     # tag overrides the image tag whose default is the chart appVersion
-    tag: "1.0.26"
+    tag: "1.0.27"
     home: "/nsi-dds"
   
   ports:
@@ -42,6 +42,22 @@ nsi-dds:
     name: "nsi-dds-cache"
     mountPath: "/cache"
     storage: "1Gi"
+
+  resources:
+    requests:
+      memory: 0.5Gi
+    limits:
+      memory: 1.5Gi
+
+  #affinity:
+  #  nodeAffinity:
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #      nodeSelectorTerms:
+  #      - matchExpressions:
+  #        - key: node.kubernetes.io/instance-type
+  #          operator: In
+  #          values:
+  #          - Standard_DS2_v2
 
 ##############################################################################
 #                                                                            #
@@ -74,6 +90,22 @@ nsi-pce:
     name: "nsi-pce-config"
     mountPath: "/nsi-pce/config"
     configFilesGlob: "config/*"
+
+  resources:
+    requests:
+      memory: 5Gi
+    limits:
+      memory: 10Gi
+
+  #affinity:
+  #  nodeAffinity:
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #      nodeSelectorTerms:
+  #      - matchExpressions:
+  #        - key: node.kubernetes.io/instance-type
+  #          operator: In
+  #          values:
+  #          - Standard_DS2_v2
 
 ##############################################################################
 #                                                                            #
@@ -117,9 +149,27 @@ nsi-safnari:
       size: 1Gi
     resources:
       requests:
-        memory: 500Mi
+        memory: 0.5Gi
+      limits:
+        memory: 2Gi
     volumePermissions:
       enabled: true
+
+  resources:
+    requests:
+      memory: 0.5Gi
+    limits:
+      memory: 1Gi
+
+  #affinity:
+  #  nodeAffinity:
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #      nodeSelectorTerms:
+  #      - matchExpressions:
+  #        - key: node.kubernetes.io/instance-type
+  #          operator: In
+  #          values:
+  #          - Standard_DS2_v2
 
 ##############################################################################
 #                                                                            #
@@ -154,3 +204,19 @@ nsi-envoy:
     name: "nsi-envoy-config"
     mountPath: "/opt/bitnami/envoy/conf"
     configFilesGlob: "config/*"
+
+  resources:
+    requests:
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+  #affinity:
+  #  nodeAffinity:
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #      nodeSelectorTerms:
+  #      - matchExpressions:
+  #        - key: node.kubernetes.io/instance-type
+  #          operator: In
+  #          values:
+  #          - Standard_DS2_v2
