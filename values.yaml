@@ -46,8 +46,10 @@ nsi-dds:
   resources:
     requests:
       memory: 0.5Gi
+      cpu: 100m
     limits:
       memory: 1.5Gi
+      cpu: 100m
 
   #affinity:
   #  nodeAffinity:
@@ -94,8 +96,10 @@ nsi-pce:
   resources:
     requests:
       memory: 5Gi
+      cpu: 100m
     limits:
       memory: 10Gi
+      cpu: 500m
 
   #affinity:
   #  nodeAffinity:
@@ -149,17 +153,21 @@ nsi-safnari:
       size: 1Gi
     resources:
       requests:
-        memory: 0.5Gi
+        memory: 0.25Gi
+        cpu: 100m
       limits:
-        memory: 2Gi
+        memory: 0.50Gi
+        cpu: 200m
     volumePermissions:
       enabled: true
 
   resources:
     requests:
-      memory: 0.5Gi
+      memory: 0.4Gi
+      cpu: 100m
     limits:
-      memory: 1Gi
+      memory: 0.6Gi
+      cpu: 200m
 
   #affinity:
   #  nodeAffinity:
@@ -196,7 +204,7 @@ nsi-envoy:
   service:
     type: LoadBalancer
     port: 443
-    ipAddress: 145.101.126.222
+    ipAddress: ""
     annotations:
       service.beta.kubernetes.io/azure-load-balancer-internal: "true"
   
@@ -207,9 +215,11 @@ nsi-envoy:
 
   resources:
     requests:
-      memory: 256Mi
+      memory: 100Mi
+      cpu: 100m
     limits:
-      memory: 512Mi
+      memory: 200Mi
+      cpu: 200m
 
   #affinity:
   #  nodeAffinity:
