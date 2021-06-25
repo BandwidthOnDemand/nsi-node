@@ -49,7 +49,7 @@ nsi-dds:
       cpu: 100m
     limits:
       memory: 1.5Gi
-      cpu: 100m
+      cpu: 1000m
 
   #affinity:
   #  nodeAffinity:
@@ -99,7 +99,7 @@ nsi-pce:
       cpu: 100m
     limits:
       memory: 10Gi
-      cpu: 500m
+      cpu: 1000m
 
   #affinity:
   #  nodeAffinity:
@@ -157,7 +157,7 @@ nsi-safnari:
         cpu: 100m
       limits:
         memory: 0.50Gi
-        cpu: 200m
+        cpu: 1000m
     volumePermissions:
       enabled: true
 
@@ -167,7 +167,7 @@ nsi-safnari:
       cpu: 100m
     limits:
       memory: 0.6Gi
-      cpu: 200m
+      cpu: 1000m
 
   #affinity:
   #  nodeAffinity:
@@ -219,7 +219,7 @@ nsi-envoy:
       cpu: 100m
     limits:
       memory: 200Mi
-      cpu: 200m
+      cpu: 1000m
 
   #affinity:
   #  nodeAffinity:
