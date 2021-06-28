@@ -202,11 +202,37 @@ nsi-envoy:
     protocol: "TCP"
   
   service:
-    type: LoadBalancer
+    #type: LoadBalancer
+    type: ClusterIP
     port: 443
-    ipAddress: ""
+    #ipAddress: ""
     annotations:
       service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: haproxy
+      haproxy.kubernetes.io/ssl-passthrough: "true"
+      #kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: dds.nsi.nrp-nautilus.io
+        paths:
+        - path: /
+          backend:
+            serviceName: nsi-node-nsi-envoy
+            servicePort: 443
+      - host: safnari.nsi.nrp-nautilus.io
+        paths:
+        - path: /
+          backend:
+            serviceName: nsi-node-nsi-envoy
+            servicePort: 443
+    tls:
+      - hosts:
+          - dds.nsi.nrp-nautilus.io
+          - safnari.nsi.nrp-nautilus.io
+        #secretName: nsi-tls
   
   config:
     name: "nsi-envoy-config"
