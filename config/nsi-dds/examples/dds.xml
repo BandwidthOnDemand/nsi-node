@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the NSI Document Distribution Service v1.0 configuration file.
+
+    The following XML elements are supported in this configuration file:
+
+    nsaId - The NSA identifier of the local NSA assocated with this DDS
+            instance.  This value will be used to determine which documents
+            in the DDS document space are associated with the /local URL
+            query.
+
+    documents - The local directory the DDS will monitor for document file
+                content to auto load into the DDS document space.  This
+                directory is checked for new content every auditInterval.
+
+    cache - The local directory used to store discovered documents that
+            will be reloaded after a restart of the DDS.  One reloaded an
+            audit occurs to refresh any documents with new versions available.
+
+    repository - The local directory where documents added to the local DDS are
+                 stored.  This is different from the cache directory in that the
+                 cache directory mirrors the state of the DDS document space,
+                 while the repository only holds those documents mastered
+                 ("owned") by this DDS server instance.
+
+    expiryInterval - The number of seconds the DDS will maintain a document
+                     after the document's lifetime has been reached.  Default
+                     is 24 hours.
+
+    baseURL - The base URL of the local DDS service that will be used when
+              registering with peer DDS services.  Is only needed if a peerURL
+              type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
+
+    peerURL - Lists peer data sources for the DDS service to utilize for
+              document discovery.  The following type of peerURL are supported:
+
+              application/vnd.ogf.nsi.dds.v1+xml - A peer DDS server.
+              application/vnd.ogf.nsi.nsa.v1+xml - A Gof3 NSA.
+              application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
+-->
+<tns:dds xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <nsaId>urn:ogf:network:example.domain:2021:nsa:safnari</nsaId>
+    <cache>/cache</cache>
+    <documents>/cache/documents</documents>
+    <repository>/cache/repository</repository>
+    <expiryInterval>600</expiryInterval>
+    <baseURL>https://dds.example.domain/dds</baseURL>
+
+    <server address="0.0.0.0" port="8401" packageName="net.es.nsi.dds">
+    </server>
+    
+    <!-- set production to false if there are peers that use SNI (known bug) -->
+    <client production="false">
+        <keyStore type="JKS">
+            <file>/config/nsi-dds-keystore.jks</file>
+            <password>secret</password>
+        </keyStore>
+        <trustStore type="JKS">
+            <file>/config/nsi-dds-truststore.jks</file>
+            <password>secret</password>
+        </trustStore>
+    </client>
+    
+    <accessControl enabled="false">
+    </accessControl>
+
+    <!-- DDS peer subscriptions -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://dds.another.domain/dds</peerURL> -->
+
+    <!-- NSA discovery documents to fetch -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsa.example.domain/nsa-discovery</peerURL> -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsa.another.domain/nsa-discovery</peerURL> -->
+
+</tns:dds>

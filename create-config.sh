@@ -31,6 +31,24 @@ log() {
     printf "%-5s %s\n" "${log_priority}" "${log_message}"
 }
 
+createConfigFolders() {
+    configFolders=()
+    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy
+    do
+        configFolders+="charts/${app}/config"
+    done
+    for app in nsi-safnari nsi-pce nsi-dds
+    do
+        configFolders+="config/${app}/certificates/key"
+        configFolders+="config/${app}/certificates/trust"
+    done
+    for configFolder in ${configFolders}
+    do
+        test ! -d "${configFolder}" && mkdir "${configFolder}" && log DEBUG "created folder ${configFolder}"
+    done
+}
+
+
 getCertificateCommonName() {
     openssl x509 -noout -subject -in "$1" |
         sed 's/^.*\/CN=\(.*\)$/\1/'
@@ -43,6 +61,7 @@ createSpki() {
         openssl enc -base64
 }
 
+createConfigFolders
 configBaseFolder="config"
 for app in nsi-dds nsi-safnari nsi-pce
 do
@@ -51,12 +70,6 @@ do
 	log INFO "======================"
     configFolder="${configBaseFolder}/${app}"
     runtimeConfigFolder="charts/${app}/config"
-    test ! -d "${runtimeConfigFolder}" && mkdir "${runtimeConfigFolder}" && log DEBUG "created runtime config folder ${runtimeConfigFolder}"
-    if ! test -d "${configFolder}"
-    then
-        log ERROR "ERROR: cannot find per application configuration folder(s) in config folder"
-        exit 1
-    fi
     #
     # create truststore
     #
@@ -130,7 +143,6 @@ log INFO ENVOY
 log INFO "======================"
 envoyCaChain="charts/nsi-envoy/config/nsi-envoy-ca-chain.pem"
 runtimeConfigFolder="charts/nsi-envoy/config"
-test ! -d "${runtimeConfigFolder}" && mkdir "${runtimeConfigFolder}" && log DEBUG "created runtime config folder ${runtimeConfigFolder}"
 test -f "${envoyCaChain}"  && rm "${envoyCaChain}" && log DEBUG "removed old ${envoyCaChain}"
 find "config" -name '*.chain' -regex '.*/trust/[^/]*\.chain' | while read certificate
 do

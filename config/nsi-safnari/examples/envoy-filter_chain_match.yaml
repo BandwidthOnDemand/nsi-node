@@ -1,5 +1,5 @@
     - filter_chain_match:
-        server_names: ["dds.dlp.surfnet.nl"]
+        server_names: ["safnari.example.domain"]
       filters:
       - name: envoy.filters.network.http_connection_manager
         typed_config:
@@ -15,7 +15,7 @@
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: dds_cluster, prefix_rewrite: "/" }
+                route: { cluster: safnari_cluster, prefix_rewrite: "/" }
           http_filters:
           - name: envoy.filters.http.router
           access_log:
@@ -34,8 +34,8 @@
           require_client_certificate: true
           common_tls_context:
             tls_certificates:
-              - certificate_chain: { filename: "/opt/bitnami/envoy/conf/nsi-dds.chain" }
-                private_key: { filename: "/opt/bitnami/envoy/conf/nsi-dds.key" }
+              - certificate_chain: { filename: "/opt/bitnami/envoy/conf/nsi-safnari.chain" }
+                private_key: { filename: "/opt/bitnami/envoy/conf/nsi-safnari.key" }
             validation_context:
               trusted_ca:
                 filename: /opt/bitnami/envoy/conf/nsi-envoy-ca-chain.pem

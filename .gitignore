@@ -1,4 +1,5 @@
 .*.swp
-config/*/certificates/key/*
-config/*/certificates/trust/*
+config/*/certificates/key
+config/*/certificates/trust
+config/*/templates
 charts/*/config

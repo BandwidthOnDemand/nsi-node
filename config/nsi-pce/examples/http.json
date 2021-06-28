@@ -1,0 +1,8 @@
+{
+    "pce": {
+        "url": "http://0.0.0.0:8080/",
+        "packageName": "net.es.nsi.pce",
+        "staticPath": "config/www/",
+        "wwwPath": "/www"
+    }
+}

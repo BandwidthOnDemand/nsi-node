@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the NSI-PCE topology source configuration file.  This file
+    now points to the NSI Document Discovery Service v1 instead of the
+    github manifest as supported in Topology Discovery v1.
+
+    The following XML elements are supported in this configuration file:
+
+    baseURL - The base URL for the local topology interface.  All resources href
+        will be rooted under this URL.
+
+    ddsURL - The base URL of the NSI DDS service used as a document source
+        for NSA description and NML topology documents.  This will point to
+        the localhost endpoint associated with the imbedded instance of the
+        DDS service (same port as NSI-PCE interface).
+
+    auditInterval - The interval (in seconds) the PCE topology service will
+        audit the configured DDS server for document changes.
+
+    defaultServiceType - The service type used as a default for networks not
+        announcing a service type in NML topology.  If not present, this
+        value will be used to create a default ServiceDefinition entry and
+        ServiceDomain entries in the NSI topology for the discovered network.
+-->
+<top:topology xmlns:top="http://schemas.es.net/nsi/2013/08/pce/topology/configuration">
+    <baseURL>http://localhost:8080/topology</baseURL>
+    <ddsURL>http://nsi-node-nsi-dds.nsi.svc.cluster.local:80/dds</ddsURL>
+    <auditInterval>3600</auditInterval>
+    <defaultServiceType>http://services.ogf.org/nsi/2013/12/descriptions/EVTS.A-GOLE</defaultServiceType>
+</top:topology>
+

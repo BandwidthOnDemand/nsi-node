@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+
+    <bean id="springApplicationContext" class="net.es.nsi.pce.spring.SpringApplicationContext" scope="singleton" />
+
+    <bean id="jsonProxy" class="net.es.nsi.pce.gson.JsonProxy" scope="singleton" />
+
+    <bean id="httpConfigProvider" class="net.es.nsi.pce.config.http.JsonHttpConfigProvider" init-method="loadConfig" scope="singleton">
+        <property name="filename" value="#{ systemProperties['configPath'] }http.json"/>
+    </bean>
+
+    <bean id="pceServer" class="net.es.nsi.pce.server.PCEServer" scope="singleton" depends-on="jsonProxy">
+        <constructor-arg index="0" ref="httpConfigProvider"/>
+    </bean>
+
+    <bean id="pceScheduler" class="net.es.nsi.pce.sched.PCEScheduler" init-method="init" scope="singleton" />
+
+    <bean id="restClient" class="net.es.nsi.pce.jersey.RestClient" scope="singleton" />
+
+    <bean id="topologyConfiguration" class="net.es.nsi.pce.topology.dao.TopologyConfiguration" init-method="load" scope="singleton">
+        <property name="filename" value="#{ systemProperties['topologyConfigFile'] }"/>
+    </bean>
+
+    <bean id="topologyProvider" class="net.es.nsi.pce.topology.provider.DdsTopologyProvider" init-method="init" scope="singleton">
+        <constructor-arg index="0" ref="topologyConfiguration"/>
+    </bean>
+
+    <bean id="documentReader" class="net.es.nsi.pce.topology.provider.DdsDocumentReader" scope="prototype" />
+
+    <bean id="reachabilityProcessor" class="net.es.nsi.pce.pf.api.gof3.ReachabilityProcessor" scope="singleton">
+        <constructor-arg index="0" ref="topologyProvider"/>
+    </bean>
+
+    <bean id="dijkstraPCE" class="net.es.nsi.pce.pf.DijkstraPCE" scope="prototype" />
+    <bean id="underspecifiedPCE" class="net.es.nsi.pce.pf.UnderspecifiedPCE" scope="prototype" />
+
+    <bean id="reachabilityPCE" class="net.es.nsi.pce.pf.ReachabilityPCE" scope="prototype" />
+    <bean id="authPCE" class="net.es.nsi.pce.pf.AuthPCE" scope="prototype" />
+    <bean id="policyPCE" class="net.es.nsi.pce.pf.PolicyPCE" scope="prototype" />
+    <bean id="resolvePCE" class="net.es.nsi.pce.pf.ResolvePCE" scope="prototype" />
+
+    <bean id="chainPCE" class="net.es.nsi.pce.pf.SequentialPCE">
+        <property name="moduleList">
+            <list>
+                <ref bean="reachabilityPCE" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="treePCE" class="net.es.nsi.pce.pf.SequentialPCE">
+        <property name="moduleList">
+            <list>
+                <ref bean="authPCE" />
+                <ref bean="policyPCE" />
+                <ref bean="dijkstraPCE" />
+                <ref bean="resolvePCE" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="sequentialPCE" class="net.es.nsi.pce.pf.SequentialPCE">
+        <property name="moduleList">
+            <list>
+                <ref bean="authPCE" />
+                <ref bean="policyPCE" />
+                <ref bean="dijkstraPCE" />
+                <ref bean="underspecifiedPCE" />
+                <ref bean="resolvePCE" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="pathfinderCore" class="net.es.nsi.pce.pf.PathfinderCore" scope="prototype">
+        <constructor-arg index="0" ref="topologyProvider"/>
+        <constructor-arg index="1" ref="chainPCE"/>
+        <constructor-arg index="2" ref="treePCE"/>
+        <constructor-arg index="3" ref="sequentialPCE"/>
+    </bean>
+</beans>
