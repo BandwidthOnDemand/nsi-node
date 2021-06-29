@@ -29,6 +29,12 @@ spec:
       serviceAccountName: {{ include "nsi-pce.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: wait-for-dds
+        image: curlimages/curl:latest
+        command: ["sh", "-c",
+          "until [ $(curl -sw '%{http_code}' http://nsi-node-nsi-dds.nsi.svc.cluster.local:80/dds/portal -o /dev/null) -eq 200 ];
+          do echo `date` sleeping 2 seconds ...; sleep 2; done"]
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
