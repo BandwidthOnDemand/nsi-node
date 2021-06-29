@@ -31,6 +31,19 @@ log() {
     printf "%-5s %s\n" "${log_priority}" "${log_message}"
 }
 
+ifExistExecute() {
+    local log_priority=$1
+    shift
+    local file="${1}"
+    shift
+    if test -f "${file}"
+    then
+        eval ${@}
+    else
+        log ${log_priority} ${file} does not exist
+    fi
+}
+
 createConfigFolders() {
     configFolders=()
     for app in nsi-safnari nsi-pce nsi-dds nsi-envoy
@@ -75,7 +88,7 @@ do
     #
     CNs=()
     truststore="charts/${app}/config/${app}-truststore.jks"
-	test -f "${truststore}" && rm "${truststore}" && log DEBUG "removed old ${truststore}"
+	ifExistExecute DEBUG "${truststore}" 'rm ${file} && log DEBUG removed old ${file}'
     find "${configFolder}/certificates/trust" \( -name '*.crt' -o -name '*.chain' \) -print | while read certificate
 	do
 		commonName=`getCertificateCommonName "${certificate}"`
@@ -101,7 +114,7 @@ do
 		log ERROR "cannot find complete set of key, certifcate and chain for ${app}"
         exit 1
 	fi
-	test -f "${keystore}" && rm "${keystore}" && log "DEBUG removed old ${keystore}"
+	ifExistExecute DEBUG "${keystore}" 'rm ${file} && log DEBUG removed old ${file}'
     commonName=`getCertificateCommonName "${certificate}"`
 	log DEBUG "creating p12 keystore"
 	log INFO "adding certificate to keystore: ${commonName}"
@@ -109,7 +122,7 @@ do
 	log DEBUG "converting pkcs12 keystore to jks"
 	keytool -importkeystore -destkeystore "${keystore}" -srckeystore "${p12tmpkeystore}" -srcstoretype pkcs12 -srcstorepass secret -storepass secret -alias "${commonName}" -noprompt 2>/dev/null ||
         log ERROR "could not covert keystore from p12 to jks"
-	test -f "${p12tmpkeystore}" && rm "${p12tmpkeystore}" && log DEBUG "removed ${p12tmpkeystore}"
+	ifExistExecute DEBUG "${p12tmpkeystore}" 'rm ${file} && log DEBUG removed ${file}'
     #
     # copying config files
     #
@@ -134,7 +147,7 @@ do
     esac
     for file in ${configFiles}
     do
-        cp -p ${configFolder}/templates/${file} ${runtimeConfigFolder} && log DEBUG "installed" ${file}
+	    ifExistExecute ERROR ""${configFolder}/templates/${file} "cp -p \${file} ${runtimeConfigFolder} && log DEBUG installed \${file}"
     done
 done
 
@@ -143,7 +156,7 @@ log INFO ENVOY
 log INFO "======================"
 envoyCaChain="charts/nsi-envoy/config/nsi-envoy-ca-chain.pem"
 runtimeConfigFolder="charts/nsi-envoy/config"
-test -f "${envoyCaChain}"  && rm "${envoyCaChain}" && log DEBUG "removed old ${envoyCaChain}"
+ifExistExecute DEBUG "${envoyCaChain}" 'rm ${file} && log DEBUG removed old ${file}'
 find "config" -name '*.chain' -regex '.*/trust/[^/]*\.chain' | while read certificate
 do
     if ! test -f "${certificate}"
@@ -157,15 +170,15 @@ do
 done
 envoyConfig="charts/nsi-envoy/config/envoy.yaml"
 log DEBUG "creating envoy config"
-test -f "${envoyConfig}"  && rm "${envoyConfig}" && log DEBUG "removed old ${envoyConfig}"
+ifExistExecute DEBUG "${envoyConfig}" 'rm ${file} && log DEBUG removed old ${file}'
 log DEBUG "adding skeleton config ..."
-cat "config/nsi-envoy/templates/envoy-head.yaml" >>${envoyConfig}
+ifExistExecute ERROR "config/nsi-envoy/templates/envoy-head.yaml" "cat \${file} >>${envoyConfig}"
 for app in nsi-dds nsi-safnari
 do
     log INFO "copying ${app} key and chain to envoy config folder"
     cat config/${app}/certificates/key/*.key >charts/nsi-envoy/config/${app}.key
     cat config/${app}/certificates/key/*.chain >charts/nsi-envoy/config/${app}.chain
-    cat "config/${app}/templates/envoy-filter_chain_match.yaml" >>${envoyConfig}
+    ifExistExecute ERROR "config/${app}/templates/envoy-filter_chain_match.yaml" "cat \${file} >>${envoyConfig}"
     echo "              verify_certificate_spki:" >>${envoyConfig}
     find "config/${app}/certificates/trust" -name '*.crt' -print | while read certificate
     do
@@ -179,5 +192,5 @@ echo "  clusters:" >>${envoyConfig}
 for app in nsi-dds nsi-safnari
 do
     log DEBUG "adding ${app} cluster config ..."
-    cat "config/${app}/templates/envoy-cluster.yaml" >>${envoyConfig}
+    ifExistExecute ERROR "config/${app}/templates/envoy-cluster.yaml" "cat \${file} >>${envoyConfig}"
 done
