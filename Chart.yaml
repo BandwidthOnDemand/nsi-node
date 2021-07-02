@@ -2,18 +2,22 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.0.1
+version: 0.0.2
 
 dependencies:
   - name: nsi-dds
-    version: "> 0.0.0"
+    version: ">= 1.0.0"
+    repository: "@surf"
     condition: nsi-dds.enabled
   - name: nsi-pce
-    version: "> 0.0.0"
+    version: ">= 1.0.0"
+    repository: "@surf"
     condition: nsi-pce.enabled
   - name: nsi-safnari
-    version: "> 0.0.0"
+    version: ">= 1.0.0"
+    repository: "@surf"
     condition: nsi-safnari.enabled
   - name: nsi-envoy
-    version: "> 0.0.0"
+    version: ">= 1.0.0"
+    repository: "@surf"
     condition: nsi-envoy.enabled
