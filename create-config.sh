@@ -74,6 +74,20 @@ createSpki() {
         openssl enc -base64
 }
 
+#
+# get and untar Helm charts
+#
+helm dependency update || log ERROR helm dependency update failed
+(
+    cd charts
+    for chart in *.tgz
+    do
+        tar -xf "$chart" && rm -f "$chart"
+    done
+)
+#
+# create per app config
+#
 createConfigFolders
 configBaseFolder="config"
 for app in nsi-dds nsi-safnari nsi-pce
@@ -150,7 +164,9 @@ do
 	    ifExistExecute ERROR ""${configFolder}/templates/${file} "cp -p \${file} ${runtimeConfigFolder} && log DEBUG installed \${file}"
     done
 done
-
+#
+# create envoy config
+#
 log INFO "======================"
 log INFO ENVOY
 log INFO "======================"

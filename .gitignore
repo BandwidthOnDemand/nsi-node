@@ -1,5 +1,7 @@
 .*.swp
 values.yaml
+Chart.lock
+charts/
 config/*/certificates/key
 config/*/certificates/trust
 config/*/templates
