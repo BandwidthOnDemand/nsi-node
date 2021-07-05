@@ -1,0 +1,51 @@
+apiVersion: v1
+entries:
+  nsi-dds:
+  - apiVersion: v2
+    appVersion: 1.0.26
+    created: "2021-07-05T14:06:41.619139+02:00"
+    description: A Helm chart for Kubernetes
+    digest: 627bfe70e1849f64043b8dd03a8d6c74940cff3fd3a447f7e9a8b1a532a1af21
+    name: nsi-dds
+    type: application
+    urls:
+    - nsi-dds-1.0.4.tgz
+    version: 1.0.4
+  nsi-envoy:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2021-07-05T14:06:41.620977+02:00"
+    description: Helm chart for nsi-envoy
+    digest: f91dfd6ff23ef36f22f2a9ba4e2d5a1497789a5be4ade697cf5ec86a0aacafa7
+    name: nsi-envoy
+    type: application
+    urls:
+    - nsi-envoy-1.0.0.tgz
+    version: 1.0.0
+  nsi-pce:
+  - apiVersion: v2
+    appVersion: 2.0.5
+    created: "2021-07-05T14:06:41.62212+02:00"
+    description: Helm chart for nsi-pce
+    digest: 7a5cd569f0f4459ee024fa62b156399479bba398b01a98a3c5d9412d6b77808a
+    name: nsi-pce
+    type: application
+    urls:
+    - nsi-pce-1.0.3.tgz
+    version: 1.0.3
+  nsi-safnari:
+  - apiVersion: v2
+    appVersion: 2.1.3.4
+    created: "2021-07-05T14:06:41.632233+02:00"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.6.0
+    description: A Helm chart for Kubernetes
+    digest: ca164c400a4fae87d0631f1298f8542f1be2fb6868b78983e94d64ed0d186ea9
+    name: nsi-safnari
+    type: application
+    urls:
+    - nsi-safnari-1.0.0.tgz
+    version: 1.0.0
+generated: "2021-07-05T14:06:41.613829+02:00"
