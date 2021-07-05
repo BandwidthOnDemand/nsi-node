@@ -7,17 +7,17 @@ version: 0.0.2
 dependencies:
   - name: nsi-dds
     version: ">= 1.0.0"
-    repository: "@surf"
+    repository: "@nsi-node"
     condition: nsi-dds.enabled
   - name: nsi-pce
     version: ">= 1.0.0"
-    repository: "@surf"
+    repository: "@nsi-node"
     condition: nsi-pce.enabled
   - name: nsi-safnari
     version: ">= 1.0.0"
-    repository: "@surf"
+    repository: "@nsi-node"
     condition: nsi-safnari.enabled
   - name: nsi-envoy
     version: ">= 1.0.0"
-    repository: "@surf"
+    repository: "@nsi-node"
     condition: nsi-envoy.enabled
