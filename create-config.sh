@@ -31,6 +31,10 @@ log() {
     printf "%-5s %s\n" "${log_priority}" "${log_message}"
 }
 
+appEnabled() {
+    [ `yq eval .$1.enabled values.yaml | tr A-Z a-z` = "true" ]
+}
+
 ifExistExecute() {
     local log_priority=$1
     shift
@@ -44,21 +48,45 @@ ifExistExecute() {
     fi
 }
 
-createConfigFolders() {
+checkConfigFolders() {
     configFolders=()
     for app in nsi-safnari nsi-pce nsi-dds nsi-envoy
     do
-        configFolders+="charts/${app}/config"
+        case ${app} in
+            nsi-dds )
+                configFolders+="${configBaseFolder}/nsi-dds/templates"
+                configFolders+="${configBaseFolder}/nsi-dds/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-dds/certificates/trust"
+                ;;
+            nsi-safnari )
+                configFolders+="${configBaseFolder}/nsi-safnari/templates"
+                configFolders+="${configBaseFolder}/nsi-safnari/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-safnari/certificates/trust"
+                ;;
+            nsi-pce )
+                configFolders+="${configBaseFolder}/nsi-pce/templates"
+                configFolders+="${configBaseFolder}/nsi-pce/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-pce/certificates/trust"
+                ;;
+            nsi-envoy )
+                configFolders+="${configBaseFolder}/nsi-envoy/templates"
+                ;;
+        esac
     done
-    for app in nsi-safnari nsi-pce nsi-dds
-    do
-        configFolders+="config/${app}/certificates/key"
-        configFolders+="config/${app}/certificates/trust"
-    done
+    local error=false
     for configFolder in ${configFolders}
     do
-        test ! -d "${configFolder}" && mkdir "${configFolder}" && log DEBUG "created folder ${configFolder}"
+        if [ ! -d "${configFolder}" ]
+        then
+            log ERROR "folder does not exist: ${configFolder}"
+            error=true
+        fi
     done
+    if [ ${error} = true ]
+    then
+        log ERROR "cannot continue, exiting!"
+        exit 1
+    fi
 }
 
 
@@ -77,7 +105,7 @@ createSpki() {
 #
 # get and untar Helm charts
 #
-helm dependency update || log ERROR helm dependency update failed
+helm dependency update || { log ERROR helm dependency update failed; exit 1 }
 (
     cd charts
     for chart in *.tgz
@@ -85,11 +113,19 @@ helm dependency update || log ERROR helm dependency update failed
         tar -xf "$chart" && rm -f "$chart"
     done
 )
+for app in nsi-safnari nsi-pce nsi-dds nsi-envoy
+do
+    if appEnabled ${app}
+    then
+        mkdir "charts/${app}/config" && log DEBUG "created folder ${app}/config"
+    fi
+done
+
 #
 # create per app config
 #
-createConfigFolders
 configBaseFolder="config"
+checkConfigFolders
 for app in nsi-dds nsi-safnari nsi-pce
 do
     log INFO "======================"
