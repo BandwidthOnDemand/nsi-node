@@ -1,6 +1,10 @@
 #!/usr/bin/env zsh
 
-declare -A levels=([DEBUG]=0 [INFO]=1 [WARN]=2 [ERROR]=3)
+declare -A levels
+levels[DEBUG]=0
+levels[INFO]=1
+levels[WARN]=2
+levels[ERROR]=3
 script_logging_level="INFO"
 configBaseFolder="config"
 
@@ -97,7 +101,7 @@ getHelmCharts()
 {
     test ! -f Chart.yaml && log ERROR cannot find Chart.yaml && exit 1
     test ! -f values.yaml && log ERROR cannot find values.yaml && exit 1
-    helm dependency update || { log ERROR helm dependency update failed; exit 1 }
+    helm dependency update --skip-refresh || { log ERROR helm dependency update failed; exit 1 }
     (
         cd charts
         for chart in *.tgz
