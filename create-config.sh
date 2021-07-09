@@ -207,7 +207,7 @@ createEnvoyConfig() {
     envoyCaChain="charts/nsi-envoy/config/nsi-envoy-ca-chain.pem"
     runtimeConfigFolder="charts/nsi-envoy/config"
     ifExistExecute DEBUG "${envoyCaChain}" 'rm ${file} && log DEBUG removed old ${file}'
-    find "config" -name '*.chain' -regex '.*/trust/[^/]*\.chain' | while read certificate
+    find "${configBaseFolder}" -name '*.chain' -regex '.*/trust/[^/]*\.chain' | while read certificate
     do
         if ! test -f "${certificate}"
         then
