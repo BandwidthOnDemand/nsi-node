@@ -152,10 +152,11 @@ createAppConfig() {
         #
         keystore="charts/${app}/config/${app}-keystore.jks"
         p12tmpkeystore="`mktemp`"
+        tmpchain="`mktemp`"
+        cat ${configFolder}/certificates/key/*.chain >$tmpchain
         certificate="`echo ${configFolder}/certificates/key/*.crt`"
         key="`echo ${configFolder}/certificates/key/*.key`"
-        chain="`echo ${configFolder}/certificates/key/*.chain`"
-        if test ! -f "${certificate}" -o ! -f "${key}" -o ! "${chain}"
+        if test ! -s "${certificate}" -o ! -s "${key}" -o ! -s "${tmpchain}"
         then 
             log ERROR "cannot find complete set of key, certifcate and chain for ${app}"
             exit 1
@@ -164,11 +165,12 @@ createAppConfig() {
         commonName=`getCertificateCommonName "${certificate}"`
         log DEBUG "creating p12 keystore"
         log INFO "adding certificate to keystore: ${commonName}"
-        openssl pkcs12 -export -name "${commonName}" -in "${certificate}" -inkey "${key}" -out "${p12tmpkeystore}" -CAfile "${chain}" -password pass:secret -chain
+        openssl pkcs12 -export -name "${commonName}" -in "${certificate}" -inkey "${key}" -out "${p12tmpkeystore}" -CAfile "${tmpchain}" -password pass:secret -chain
         log DEBUG "converting pkcs12 keystore to jks"
         keytool -importkeystore -destkeystore "${keystore}" -srckeystore "${p12tmpkeystore}" -srcstoretype pkcs12 -srcstorepass secret -storepass secret -alias "${commonName}" -noprompt 2>/dev/null ||
             log ERROR "could not covert keystore from p12 to jks"
         ifExistExecute DEBUG "${p12tmpkeystore}" 'rm ${file} && log DEBUG removed ${file}'
+        ifExistExecute DEBUG "${tmpchain}" 'rm ${file} && log DEBUG removed ${file}'
         #
         # copying config files
         #
@@ -227,7 +229,7 @@ createEnvoyConfig() {
     do
         log INFO "copying ${app} key and chain to envoy config folder"
         cat ${configBaseFolder}/${app}/certificates/key/*.key >charts/nsi-envoy/config/${app}.key
-        cat ${configBaseFolder}/${app}/certificates/key/*.chain >charts/nsi-envoy/config/${app}.chain
+        cat ${configBaseFolder}/${app}/certificates/key/*.{crt,chain} >charts/nsi-envoy/config/${app}.chain
         ifExistExecute ERROR "${configBaseFolder}/${app}/templates/envoy-filter_chain_match.yaml" "cat \${file} >>${envoyConfig}"
         echo "              verify_certificate_spki:" >>${envoyConfig}
         find "${configBaseFolder}/${app}/certificates/trust" -name '*.crt' -print | while read certificate
