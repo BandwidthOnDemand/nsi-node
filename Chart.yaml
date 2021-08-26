@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.0.11
+version: 0.0.12
 
 dependencies:
   - name: nsi-dds

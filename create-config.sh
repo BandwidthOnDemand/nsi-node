@@ -82,9 +82,25 @@ checkConfigFolders() {
 }
 
 
+#
+# get certificate common name, if empty return organisational unit, otherwise
+# just return distinguished name
+#
 getCertificateCommonName() {
-    openssl x509 -noout -subject -in "$1" |
-        sed 's/^.*\/CN=\(.*\)$/\1/'
+    DN=`openssl x509 -noout -subject -in "$1"`
+    CN=`echo "$DN" | sed -e 's/^subject= //' -e 's/^.*\/CN=\(.*\)$/\1/' -e 's"/.*$""'`
+    if test -n "$CN"
+    then
+        echo "$CN"
+    else
+        OU=`echo "$DN" | sed -e 's/^subject= //' -e 's/^.*\/OU=\(.*\)$/\1/' -e 's"/.*$""'`
+        if test -n "$OU"
+        then
+            echo "$OU"
+        else
+            echo "$DN"
+        fi
+    fi
 }
 
 createSpki() {
