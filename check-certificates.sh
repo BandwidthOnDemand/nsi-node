@@ -3,18 +3,20 @@
 #
 # array's to store certificate info by key and DN
 #
-declare -A fileByKey
-declare -A fileByDn
-declare -A subjectDnByKey
-declare -A subjectDnByDn
-declare -A issuerDnByKey
-declare -A issuerDnByDn
-declare -A issuerKeyByKey
-declare -A issuerKeyByDn
-declare -A notBeforeByKey
-declare -A notBeforeByDn
-declare -A notAfterByKey
-declare -A notAfterByDn
+initializeArrays() {
+    declare -g -A fileByKey=()
+    declare -g -A fileByDn=()
+    declare -g -A subjectDnByKey=()
+    declare -g -A subjectDnByDn=()
+    declare -g -A issuerDnByKey=()
+    declare -g -A issuerDnByDn=()
+    declare -g -A issuerKeyByKey=()
+    declare -g -A issuerKeyByDn=()
+    declare -g -A notBeforeByKey=()
+    declare -g -A notBeforeByDn=()
+    declare -g -A notAfterByKey=()
+    declare -g -A notAfterByDn=()
+}
 
 #
 # load all information from given certificate and add to environment
@@ -219,6 +221,7 @@ shift $((OPTIND -1))
 #
 if [ -n "$checkDirectory" ]
 then
+    initializeArrays
     loadChainCertificates "$checkDirectory"
     verifyCertificateChains "$checkDirectory"
 else
@@ -226,6 +229,7 @@ else
     for dir in config/*/certificates/trust
     do
         #set +e
+        initializeArrays
         loadChainCertificates "$dir"
         verifyCertificateChains "$dir"
     done
