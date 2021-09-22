@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.0.14
+version: 0.0.15
 
 dependencies:
   - name: nsi-dds
@@ -21,3 +21,7 @@ dependencies:
     version: "1.0.2"
     repository: "@nsi-node"
     condition: nsi-envoy.enabled
+  - name: nsi-opennsa
+    version: "0.0.1"
+    repository: "@nsi-node"
+    condition: nsi-opennsa.enabled
