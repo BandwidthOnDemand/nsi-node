@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.0.18
+version: 0.0.19
 
 dependencies:
   - name: nsi-dds
@@ -14,7 +14,7 @@ dependencies:
     repository: "@nsi-node"
     condition: nsi-pce.enabled
   - name: nsi-safnari
-    version: "1.0.8"
+    version: "1.0.9"
     repository: "@nsi-node"
     condition: nsi-safnari.enabled
   - name: nsi-envoy
@@ -22,7 +22,7 @@ dependencies:
     repository: "@nsi-node"
     condition: nsi-envoy.enabled
   - name: nsi-opennsa
-    version: "0.0.4"
+    version: "0.0.5"
     repository: "@nsi-node"
     condition: nsi-opennsa.enabled
   - name: postgresql
