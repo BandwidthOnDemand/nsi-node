@@ -21,3 +21,10 @@
 .idea/
 *.tmproj
 .vscode/
+#
+LICENSE
+README.md
+check-certificates.sh
+create-config.sh
+docs
+examples
