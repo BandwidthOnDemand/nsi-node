@@ -3,7 +3,7 @@ entries:
   nsi-dds:
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2021-09-30T11:03:15.477036+02:00"
+    created: "2021-09-30T12:02:25.455368+02:00"
     description: A Helm chart for Kubernetes
     digest: 627bfe70e1849f64043b8dd03a8d6c74940cff3fd3a447f7e9a8b1a532a1af21
     name: nsi-dds
@@ -14,7 +14,7 @@ entries:
   nsi-envoy:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-09-30T11:03:15.489256+02:00"
+    created: "2021-09-30T12:02:25.458424+02:00"
     description: Helm chart for nsi-envoy
     digest: f983b5d8bc0c6c2a166ba048895a13551e993259d4868046293ffa2eb47dd537
     name: nsi-envoy
@@ -24,7 +24,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-09-30T11:03:15.483899+02:00"
+    created: "2021-09-30T12:02:25.457592+02:00"
     description: Helm chart for nsi-envoy
     digest: 0ee4c412baa8721da3f17909c0e5571d62c79e18d50d8f296f79d6ad9a0875aa
     name: nsi-envoy
@@ -34,7 +34,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-09-30T11:03:15.480919+02:00"
+    created: "2021-09-30T12:02:25.456832+02:00"
     description: Helm chart for nsi-envoy
     digest: 8e7e78b8f00c81657cf596afdf14dc0a393943e1c5ccb8c5c60e4194397f9942
     name: nsi-envoy
@@ -44,7 +44,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-09-30T11:03:15.47865+02:00"
+    created: "2021-09-30T12:02:25.456105+02:00"
     description: Helm chart for nsi-envoy
     digest: f91dfd6ff23ef36f22f2a9ba4e2d5a1497789a5be4ade697cf5ec86a0aacafa7
     name: nsi-envoy
@@ -55,7 +55,22 @@ entries:
   nsi-opennsa:
   - apiVersion: v2
     appVersion: 3.0.1.5
-    created: "2021-09-30T11:03:15.529909+02:00"
+    created: "2021-09-30T12:02:25.491057+02:00"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: '@bitnami'
+      version: '>=9.6 <10'
+    description: NorduNet's NSI NSA OpenNSA
+    digest: d9de2287e051277536d69733c1c0fdad3d72ad952384b9d493edd88b8fd5d09f
+    name: nsi-opennsa
+    type: application
+    urls:
+    - nsi-opennsa-0.0.8.tgz
+    version: 0.0.8
+  - apiVersion: v2
+    appVersion: 3.0.1.5
+    created: "2021-09-30T12:02:25.487417+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -70,7 +85,7 @@ entries:
     version: 0.0.7
   - apiVersion: v2
     appVersion: 3.0.1.5
-    created: "2021-09-30T11:03:15.525633+02:00"
+    created: "2021-09-30T12:02:25.482603+02:00"
     dependencies:
     - name: postgresql
       repository: '@bitnami'
@@ -84,7 +99,7 @@ entries:
     version: 0.0.6
   - apiVersion: v2
     appVersion: 3.0.1.5
-    created: "2021-09-30T11:03:15.519226+02:00"
+    created: "2021-09-30T12:02:25.478988+02:00"
     description: NorduNet's NSI NSA OpenNSA
     digest: addadde074f35dffdb09527f2520906b9c2754966d6f319c83ca20c756a9bc7f
     name: nsi-opennsa
@@ -94,7 +109,7 @@ entries:
     version: 0.0.5
   - apiVersion: v2
     appVersion: 3.0.1.5
-    created: "2021-09-30T11:03:15.516679+02:00"
+    created: "2021-09-30T12:02:25.477965+02:00"
     description: NorduNet's NSI NSA OpenNSA
     digest: b7c2e9b376b05134a60a72ab283d6493455ae74a32bccf39c360cda37425d0c4
     name: nsi-opennsa
@@ -104,7 +119,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 3.0.1.5
-    created: "2021-09-30T11:03:15.510074+02:00"
+    created: "2021-09-30T12:02:25.47341+02:00"
     dependencies:
     - name: postgresql
       repository: '@bitnami'
@@ -118,7 +133,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 3.0.1.5
-    created: "2021-09-30T11:03:15.504331+02:00"
+    created: "2021-09-30T12:02:25.468927+02:00"
     dependencies:
     - name: postgresql
       repository: '@bitnami'
@@ -132,7 +147,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.0.4
-    created: "2021-09-30T11:03:15.498227+02:00"
+    created: "2021-09-30T12:02:25.464955+02:00"
     dependencies:
     - name: postgresql
       repository: '@bitnami'
@@ -147,7 +162,7 @@ entries:
   nsi-pce:
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-09-30T11:03:15.551162+02:00"
+    created: "2021-09-30T12:02:25.494699+02:00"
     description: Helm chart for nsi-pce
     digest: 0ccef32ad261e6b310eec2ccbf2b7a39bec974dd7a2522b09d25adff2360d347
     name: nsi-pce
@@ -157,7 +172,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-09-30T11:03:15.544181+02:00"
+    created: "2021-09-30T12:02:25.493861+02:00"
     description: Helm chart for nsi-pce
     digest: ade98b5df9fa6e8849b976053bd1871293904a338f0ecb4515f89d03559708fc
     name: nsi-pce
@@ -167,7 +182,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-09-30T11:03:15.538701+02:00"
+    created: "2021-09-30T12:02:25.492689+02:00"
     description: Helm chart for nsi-pce
     digest: 5e529311876d55d36836b3d86e49966a8bf898d6723b479ef3448a70928082b4
     name: nsi-pce
@@ -177,7 +192,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-09-30T11:03:15.532378+02:00"
+    created: "2021-09-30T12:02:25.491834+02:00"
     description: Helm chart for nsi-pce
     digest: 7a5cd569f0f4459ee024fa62b156399479bba398b01a98a3c5d9412d6b77808a
     name: nsi-pce
@@ -188,7 +203,7 @@ entries:
   nsi-safnari:
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.573059+02:00"
+    created: "2021-09-30T12:02:25.511545+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -203,7 +218,7 @@ entries:
     version: 1.0.11
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.568397+02:00"
+    created: "2021-09-30T12:02:25.507032+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -217,7 +232,7 @@ entries:
     version: 1.0.10
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.62668+02:00"
+    created: "2021-09-30T12:02:25.540678+02:00"
     description: A Helm chart for Kubernetes
     digest: 12fbb24699d9887c2754aed7c585a21b2c614738efa7e5a2add40400487a50fe
     name: nsi-safnari
@@ -227,7 +242,7 @@ entries:
     version: 1.0.9
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.623439+02:00"
+    created: "2021-09-30T12:02:25.538639+02:00"
     description: A Helm chart for Kubernetes
     digest: 093dac99d08e19b4fb62dcf48ae31560c473fff7e5d7eab626b51c8d69c209bc
     name: nsi-safnari
@@ -237,7 +252,7 @@ entries:
     version: 1.0.8
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.615311+02:00"
+    created: "2021-09-30T12:02:25.53543+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -251,7 +266,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.607785+02:00"
+    created: "2021-09-30T12:02:25.531704+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -265,7 +280,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.599832+02:00"
+    created: "2021-09-30T12:02:25.527418+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -279,7 +294,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.593626+02:00"
+    created: "2021-09-30T12:02:25.523446+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -293,7 +308,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.587576+02:00"
+    created: "2021-09-30T12:02:25.519897+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -307,7 +322,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.578632+02:00"
+    created: "2021-09-30T12:02:25.515125+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -321,7 +336,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.562727+02:00"
+    created: "2021-09-30T12:02:25.503033+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -335,7 +350,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-09-30T11:03:15.557376+02:00"
+    created: "2021-09-30T12:02:25.499244+02:00"
     dependencies:
     - name: postgresql
       repository: https://charts.bitnami.com/bitnami
@@ -347,4 +362,4 @@ entries:
     urls:
     - nsi-safnari-1.0.0.tgz
     version: 1.0.0
-generated: "2021-09-30T11:03:15.474332+02:00"
+generated: "2021-09-30T12:02:25.454423+02:00"
