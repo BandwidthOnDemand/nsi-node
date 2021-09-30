@@ -42,8 +42,9 @@ ifExistExecute() {
 
 checkConfigFolders() {
     configFolders=()
-    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy
+    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa
     do
+        appEnabled ${app} || continue
         case ${app} in
             nsi-dds )
                 configFolders+="${configBaseFolder}/nsi-dds/templates"
@@ -62,6 +63,12 @@ checkConfigFolders() {
                 ;;
             nsi-envoy )
                 configFolders+="${configBaseFolder}/nsi-envoy/templates"
+                ;;
+            nsi-opennsa )
+                configFolders+="${configBaseFolder}/nsi-opennsa/templates"
+                configFolders+="${configBaseFolder}/nsi-opennsa/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-opennsa/certificates/trust"
+                configFolders+="${configBaseFolder}/nsi-opennsa/backends"
                 ;;
         esac
     done
@@ -120,12 +127,13 @@ getHelmCharts()
     helm dependency update --skip-refresh || { log ERROR helm dependency update failed; exit 1 }
     (
         cd charts
+        rm -rf nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa postgresql && log DEBUG "removed old chart folders"
         for chart in *.tgz
         do
             tar -xf "$chart" && rm -f "$chart"
         done
     )
-    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy
+    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa
     do
         if appEnabled ${app} && test ! -d "charts/${app}/config"
         then
@@ -140,6 +148,7 @@ getHelmCharts()
 createAppConfig() {
     for app in nsi-dds nsi-safnari nsi-pce
     do
+        appEnabled ${app} || continue
         log INFO "======================"
         log INFO "`echo ${app} | tr a-z A-Z`"
         log INFO "======================"
@@ -241,8 +250,9 @@ createEnvoyConfig() {
     ifExistExecute DEBUG "${envoyConfig}" 'rm ${file} && log DEBUG removed old ${file}'
     log DEBUG "adding skeleton config ..."
     ifExistExecute ERROR "${configBaseFolder}/nsi-envoy/templates/envoy-head.yaml" "cat \${file} >>${envoyConfig}"
-    for app in nsi-dds nsi-safnari
+    for app in nsi-dds nsi-safnari nsi-opennsa
     do
+        appEnabled ${app} || continue
         log INFO "copying ${app} key and chain to envoy config folder"
         cat ${configBaseFolder}/${app}/certificates/key/*.key >charts/nsi-envoy/config/${app}.key
         cat ${configBaseFolder}/${app}/certificates/key/*.{crt,chain} >charts/nsi-envoy/config/${app}.chain
@@ -257,11 +267,55 @@ createEnvoyConfig() {
         done
     done
     echo "  clusters:" >>${envoyConfig}
-    for app in nsi-dds nsi-safnari
+    for app in nsi-dds nsi-safnari nsi-opennsa
     do
+        appEnabled ${app} || continue
         log DEBUG "adding ${app} cluster config ..."
         ifExistExecute ERROR "${configBaseFolder}/${app}/templates/envoy-cluster.yaml" "cat \${file} >>${envoyConfig}"
     done
+}
+
+#
+# create OpenNSA config
+#
+createOpennsaConfig() {
+    log INFO "======================"
+    log INFO "OPENNSA"
+    log INFO "======================"
+    configFolder="${configBaseFolder}/nsi-opennsa"
+    runtimeConfigFolder="charts/nsi-opennsa/config"
+    runtimeCertificatesFolder="charts/nsi-opennsa/certificates"
+    runtimeBackendsFolder="charts/nsi-opennsa/backends"
+    mkdir "${runtimeCertificatesFolder}" || log ERROR "cannot create ${runtimeCertificatesFolder}"
+    mkdir "${runtimeBackendsFolder}" || log ERROR "cannot create ${runtimeBackendsFolder}"
+    find "${configFolder}"/certificates/{trust,key} \( -name '*.crt' -o -name '*.chain' \) -print | while read certificate
+    do
+        certificateHash=`openssl x509 -noout -hash -in ${certificate}`
+        commonName=`getCertificateCommonName "${certificate}"`
+        cp -p "${certificate}" "${runtimeCertificatesFolder}/${certificateHash}.0" && \
+            log INFO "adding certificate ${certificateHash}.0: ${commonName}" || \
+            log ERROR "cannot install certificate ${certificate}"
+    done
+    find "${configFolder}/backends" -type f -print | while read backend
+    do
+        cp -p "${backend}" "${runtimeBackendsFolder}" && \
+            log INFO "adding backend " `basename "${backend}"` || \
+            log ERROR "cannot install backend " `basename "${backend}"`
+    done
+    for file in opennsa.conf opennsa.nrm opennsa.tac startup.sh
+    do
+        ifExistExecute ERROR ""${configFolder}/templates/${file} "cp -p \${file} ${runtimeConfigFolder} && log INFO installed \${file}"
+    done
+    cp -p ${configFolder}/certificates/key/*.key ${runtimeConfigFolder}/server.key && \
+        log INFO "adding server key" || \
+        log ERROR "cannot add  server key"
+    cp -p ${configFolder}/certificates/key/*.crt ${runtimeConfigFolder}/server.crt && \
+        log INFO "adding server certificate " || \
+        log ERROR "cannot add  server certificate"
+    log INFO "installing opennsa init db script"
+    (echo "cat <<EOF | psql opennsa";
+     cat ${configFolder}/templates/schema.sql;
+     echo "EOF") >charts/postgresql/files/docker-entrypoint-initdb.d/opennsa-schema.sh
 }
 
 #
@@ -292,4 +346,5 @@ shift $((OPTIND -1))
 checkConfigFolders
 getHelmCharts
 createAppConfig
-createEnvoyConfig
+appEnabled nsi-opennsa && createOpennsaConfig
+appEnabled nsi-envoy && createEnvoyConfig
