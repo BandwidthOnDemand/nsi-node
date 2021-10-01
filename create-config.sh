@@ -117,6 +117,7 @@ copyConfigFiles() {
             configFiles+=opennsa.conf
             configFiles+=opennsa.nrm
             configFiles+=opennsa.tac
+            configFiles+=startup.sh
             ;;
     esac
     for file in ${configFiles}
@@ -315,10 +316,6 @@ createOpennsaConfig() {
         cp -p "${backend}" "${runtimeBackendsFolder}" && \
             log INFO "adding backend " `basename "${backend}"` || \
             log ERROR "cannot install backend " `basename "${backend}"`
-    done
-    for file in opennsa.conf opennsa.nrm opennsa.tac startup.sh
-    do
-        ifExistExecute ERROR ""${configFolder}/templates/${file} "cp -p \${file} ${runtimeConfigFolder} && log INFO installed \${file}"
     done
     cp -p ${configFolder}/certificates/key/*.key ${runtimeConfigFolder}/server.key && \
         log INFO "adding server key" || \
