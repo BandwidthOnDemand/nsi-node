@@ -88,6 +88,42 @@ checkConfigFolders() {
     fi
 }
 
+#
+# copy config files
+#
+copyConfigFiles() {
+    local app=$1
+    local configFolder=$2
+    local runtimeConfigFolder=$3
+    log INFO "installing config file(s)"
+    configFiles=()
+    case ${app} in
+        nsi-dds )
+            configFiles+=dds.xml
+            configFiles+=log4j.xml
+            configFiles+=logging.properties
+            ;;
+        nsi-safnari )
+            configFiles+=config-overrides.conf
+            ;;
+        nsi-pce )
+            configFiles+=log4j.xml
+            configFiles+=logging.properties
+            configFiles+=topology-dds.xml
+            configFiles+=beans.xml
+            configFiles+=http.json
+            ;;
+        nsi-opennsa )
+            configFiles+=opennsa.conf
+            configFiles+=opennsa.nrm
+            configFiles+=opennsa.tac
+            ;;
+    esac
+    for file in ${configFiles}
+    do
+        ifExistExecute ERROR ""${configFolder}/templates/${file} "cp -p \${file} ${runtimeConfigFolder} && log DEBUG installed \${file}"
+    done
+}
 
 #
 # get certificate common name, if empty return organisational unit, otherwise
@@ -143,7 +179,7 @@ getHelmCharts()
 }
 
 #
-# create per app config
+# create per Java app config
 #
 createAppConfig() {
     for app in nsi-dds nsi-safnari nsi-pce
@@ -197,31 +233,9 @@ createAppConfig() {
         ifExistExecute DEBUG "${p12tmpkeystore}" 'rm ${file} && log DEBUG removed ${file}'
         ifExistExecute DEBUG "${tmpchain}" 'rm ${file} && log DEBUG removed ${file}'
         #
-        # copying config files
+        # copy config files
         #
-        log INFO "installing config file(s)"
-        configFiles=()
-        case ${app} in
-            nsi-dds )
-                configFiles+=dds.xml
-                configFiles+=log4j.xml
-                configFiles+=logging.properties
-                ;;
-            nsi-safnari )
-                configFiles+=config-overrides.conf
-                ;;
-            nsi-pce )
-                configFiles+=log4j.xml
-                configFiles+=logging.properties
-                configFiles+=topology-dds.xml
-                configFiles+=beans.xml
-                configFiles+=http.json
-                ;;
-        esac
-        for file in ${configFiles}
-        do
-            ifExistExecute ERROR ""${configFolder}/templates/${file} "cp -p \${file} ${runtimeConfigFolder} && log DEBUG installed \${file}"
-        done
+        copyConfigFiles ${app} ${configFolder} ${runtimeConfigFolder}
     done
 }
 #
@@ -316,6 +330,10 @@ createOpennsaConfig() {
     (echo "cat <<EOF | psql opennsa";
      cat ${configFolder}/templates/schema.sql;
      echo "EOF") >charts/postgresql/files/docker-entrypoint-initdb.d/opennsa-schema.sh
+    #
+    # copy config files
+    #
+    copyConfigFiles "nsi-opennsa" ${configFolder} ${runtimeConfigFolder}
 }
 
 #
