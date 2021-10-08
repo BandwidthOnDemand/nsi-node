@@ -22,7 +22,7 @@ dependencies:
     repository: "@nsi-node"
     condition: nsi-envoy.enabled
   - name: nsi-opennsa
-    version: "0.0.10"
+    version: "0.0.11"
     repository: "@nsi-node"
     condition: nsi-opennsa.enabled
   - name: postgresql
