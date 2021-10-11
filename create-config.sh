@@ -117,7 +117,6 @@ copyConfigFiles() {
             configFiles+=opennsa.conf
             configFiles+=opennsa.nrm
             configFiles+=opennsa.tac
-            configFiles+=startup.sh
             ;;
     esac
     for file in ${configFiles}
