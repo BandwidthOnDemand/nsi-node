@@ -7,6 +7,7 @@ levels[WARN]=2
 levels[ERROR]=3
 script_logging_level="INFO"
 configBaseFolder="config"
+postgresqlInitDb="charts/postgresql/files/docker-entrypoint-initdb.d"
 
 
 log() {
@@ -322,14 +323,24 @@ createOpennsaConfig() {
     cp -p ${configFolder}/certificates/key/*.crt ${runtimeConfigFolder}/server.crt && \
         log INFO "adding server certificate " || \
         log ERROR "cannot add  server certificate"
-    log INFO "installing opennsa init db script"
-    (echo "cat <<EOF | psql opennsa";
-     cat ${configFolder}/templates/schema.sql;
-     echo "EOF") >charts/postgresql/files/docker-entrypoint-initdb.d/opennsa-schema.sh
     #
     # copy config files
     #
     copyConfigFiles "nsi-opennsa" ${configFolder} ${runtimeConfigFolder}
+}
+
+createPostgresqlConfig() {
+    log INFO "======================"
+    log INFO "POSTGRESQL"
+    log INFO "======================"
+    for app in nsi-safnari nsi-opennsa
+    do
+        appEnabled ${app} || continue
+        configFolder="${configBaseFolder}/${app}"
+        cp -p "${configFolder}/templates/create-postgres-db.sh" "${postgresqlInitDb}/${app}.sh" 2>/dev/null && \
+            log INFO "installing ${app} init db script" || \
+            log ERROR "cannot install ${app} init db script"
+    done
 }
 
 #
@@ -362,3 +373,4 @@ getHelmCharts
 createAppConfig
 appEnabled nsi-opennsa && createOpennsaConfig
 appEnabled nsi-envoy && createEnvoyConfig
+appEnabled postgresql && createPostgresqlConfig
