@@ -17,6 +17,20 @@ authorisation.
   * [NSI\-node chart](#nsi-node-chart)
     * [Local copy](#local-copy)
     * [Configuration repository](#configuration-repository)
+* [Configuration](#configuration)
+  * [Folder layout](#folder-layout)
+  * [Enable/disable applications](#enabledisable-applications)
+  * [Certificates](#certificates)
+  * [Configuration files](#configuration-files)
+    * [nsi\-safnari](#nsi-safnari)
+    * [nsi\-dds](#nsi-dds)
+    * [nsi\-pce](#nsi-pce)
+    * [nsi\-opennsa](#nsi-opennsa)
+    * [nsi\-envoy](#nsi-envoy)
+* [Deploy](#deploy)
+  * [Check certificates and chains](#check-certificates-and-chains)
+  * [Create chart configuration](#create-chart-configuration)
+  * [Install or upgrade deployment](#install-or-upgrade-deployment)
 
 ## Installation
 
@@ -320,13 +334,14 @@ first install but also when you upgrade your NSI-node helm deployment.
 
 ```shell
 kubectl create secret generic example-nsi-node-secret \
-        --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" \
-        --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
-POSTGRES_PASSWORD=`kubectl get secret example-nsi-node-secret -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
+    --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" \
+    --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
+POSTGRES_PASSWORD=`kubectl get secret example-nsi-node-secret \
+    -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
 helm upgrade \
-     --install \
-     --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD \
-     example-nsi-node .
+    --install \
+    --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD \
+    example-nsi-node .
 ```
 
 While upgrading the configuration of an exiting NSI-node deployment you can use
