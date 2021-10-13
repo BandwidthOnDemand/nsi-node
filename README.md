@@ -334,14 +334,15 @@ first install but also when you upgrade your NSI-node helm deployment.
 
 ```shell
 kubectl create secret generic example-nsi-node-secret \
-    --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" \
-    --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
+        --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" \
+        --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
 POSTGRES_PASSWORD=`kubectl get secret example-nsi-node-secret \
-    -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
+        -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
+./create-config.sh
 helm upgrade \
-    --install \
-    --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD \
-    example-nsi-node .
+        --install \
+        --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD \
+        example-nsi-node .
 ```
 
 While upgrading the configuration of an exiting NSI-node deployment you can use
