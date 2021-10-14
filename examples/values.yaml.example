@@ -71,6 +71,9 @@ nsi-dds:
   cache:
     storage: "1Gi"
 
+  config:
+    name: "config"
+
 ##############################################################################
 #                                                                            #
 # Network Service Interface Patch Computation Element                        #
