@@ -145,7 +145,7 @@ nsi-pce:
       cpu: 1000m
 
   config:
-    name: "nsi-pce-config"
+    name: "config"
     mountPath: "/nsi-pce/config"
     configFilesGlob: "config/*"
 
@@ -222,7 +222,7 @@ nsi-safnari:
       cpu: 1000m
 
   config:
-    name: "nsi-safnari-config"
+    name: "config"
     mountPath: "/config"
     configFilesGlob: "config/*"
 
@@ -305,7 +305,7 @@ nsi-envoy:
       cpu: 1000m
 
   config:
-    name: "nsi-envoy-config"
+    name: "config"
     mountPath: "/opt/bitnami/envoy/conf"
     configFilesGlob: "config/*"
 
