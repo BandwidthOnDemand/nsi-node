@@ -409,7 +409,7 @@ installed. These secrets are stored in a per deployment specific k8s secret
 that uses a name based on the NSI-node chart deployment name: `<deployment
 name>-secret`. Make sure to create the k8s secret with the correct name
 otherwise references from the library charts will not work. The
-POSTGRES_PASSWORD must be passed on the helm command line, not only for the
+`POSTGRES_PASSWORD` must be passed on the helm command line, not only for the
 first install but also when you upgrade your NSI-node helm deployment. A CI
 based deployment can store both secrets in CI variables and integrate the
 deploy commands below into the CI script. 
