@@ -3,7 +3,7 @@ entries:
   nsi-dds:
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2021-10-14T15:29:19.910686+02:00"
+    created: "2021-10-14T15:40:39.867396+02:00"
     description: A Helm chart for Kubernetes
     digest: 30e621c71c900e1ee1ab820b7399b6b608ff5992f5033d85b9d07d0254c83b48
     name: nsi-dds
@@ -13,7 +13,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2021-10-14T15:29:19.910049+02:00"
+    created: "2021-10-14T15:40:39.866871+02:00"
     description: A Helm chart for Kubernetes
     digest: 9fe4c04dcb9c7e75efb2e97197d2e5c0d6da06b5365e54b78114a491488bb6dd
     name: nsi-dds
@@ -24,7 +24,7 @@ entries:
   nsi-envoy:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-10-14T15:29:19.911667+02:00"
+    created: "2021-10-14T15:40:39.867907+02:00"
     description: Helm chart for nsi-envoy
     digest: 594ee46bac46e9db86d1d5c90b5fb32305c9fb1aff5c51e62bcd3428bbdbe888
     name: nsi-envoy
@@ -35,7 +35,7 @@ entries:
   nsi-opennsa:
   - apiVersion: v2
     appVersion: 3.0.1.7
-    created: "2021-10-14T15:29:19.918833+02:00"
+    created: "2021-10-14T15:40:39.871816+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -51,7 +51,7 @@ entries:
   nsi-pce:
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-10-14T15:29:19.92124+02:00"
+    created: "2021-10-14T15:40:39.874979+02:00"
     description: Helm chart for nsi-pce
     digest: 561f1e8c62aa4a1da5a863c861ac6b13f9feeedc63605e60caf14eaa571d5fca
     name: nsi-pce
@@ -61,7 +61,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-10-14T15:29:19.920586+02:00"
+    created: "2021-10-14T15:40:39.874102+02:00"
     description: Helm chart for nsi-pce
     digest: ac21f22486c014dff032bb800eadee87f79fc5753df8f7374d99a5f5e51f60a0
     name: nsi-pce
@@ -72,7 +72,7 @@ entries:
   nsi-safnari:
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-10-14T15:29:19.93096+02:00"
+    created: "2021-10-14T15:40:39.88152+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -87,7 +87,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-10-14T15:29:19.926878+02:00"
+    created: "2021-10-14T15:40:39.878216+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -100,4 +100,4 @@ entries:
     urls:
     - nsi-safnari-1.1.0.tgz
     version: 1.1.0
-generated: "2021-10-14T15:29:19.907863+02:00"
+generated: "2021-10-14T15:40:39.866034+02:00"
