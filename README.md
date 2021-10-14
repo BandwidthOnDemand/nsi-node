@@ -17,20 +17,26 @@ authorisation.
   * [NSI\-node chart](#nsi-node-chart)
     * [Local copy](#local-copy)
     * [Configuration repository](#configuration-repository)
+  * [Helm deployment values](#helm-deployment-values)
 * [Configuration](#configuration)
   * [Folder layout](#folder-layout)
   * [Enable/disable applications](#enabledisable-applications)
   * [Certificates](#certificates)
-  * [Configuration files](#configuration-files)
+  * [Application configuration files](#application-configuration-files)
     * [nsi\-safnari](#nsi-safnari)
     * [nsi\-dds](#nsi-dds)
     * [nsi\-pce](#nsi-pce)
     * [nsi\-opennsa](#nsi-opennsa)
     * [nsi\-envoy](#nsi-envoy)
+  * [Expose node to the outside world](#expose-node-to-the-outside-world)
+    * [With k8s LoadBalancer IP](#with-k8s-loadbalancer-ip)
+    * [Witch k8s ingress](#witch-k8s-ingress)
 * [Deploy](#deploy)
   * [Check certificates and chains](#check-certificates-and-chains)
   * [Create chart configuration](#create-chart-configuration)
   * [Install or upgrade deployment](#install-or-upgrade-deployment)
+* [Debug](#debug)
+  * [Envoy proxy](#envoy-proxy)
 
 ## Installation
 
@@ -89,6 +95,10 @@ configuration:
 git config --global diff.submodule
 ```
 
+### Helm deployment values
+
+The NSI-node chart and its application library charts can be configured by editing the `Chart.yaml` and `values.yaml` files. A version with reasonable defaults of the latter file can be found in the examples folder and should be copied to the top folder of the checked out version of the chart.
+
 ## Configuration
 
 ### Folder layout
@@ -143,7 +153,7 @@ If NSI-node is deployed using a CI/CD tool the application private keys can be
 stored as CI file variables and copied to the correct `key` folder from the CI
 deploy script.
 
-### Configuration files
+### Application configuration files
 
 The per-application set of configuration files is placed in the `templates`
 folder. Configuration file examples can be found in the `examples` folder of
@@ -287,6 +297,74 @@ config
 
 Nothing should be configured here.
 
+### Expose node to the outside world
+
+The stack uses virtual hostname based routing of the traffic through the Envoy
+proxy. There are multiple ways of exposing your NSI-node stack to the outside
+world, two of them are described below.
+
+#### With k8s LoadBalancer IP
+
+The easiest way probably is to specify the external IP address as
+`LoadBalancer` `ipAddress` when publishing the nsi-envoy service. For an Azure
+deployement edit the `nsi-envoy` section in `values.yaml` to look like
+configuration snippet below. Please consult the cloud providers documentation
+
+```yaml
+nsi-envoy:
+  enabled: true
+
+  service:
+    type: LoadBalancer
+    ipAddress: "1.2.3.4"
+    port: 443
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
+  ingress:
+    enabled: false
+```
+
+#### Witch k8s ingress
+
+Another way is to have your `ingress` route the set of virtual hostnames to
+your `nsi-envoy` service. This example uses an HAProxy based ingress, consult
+your cloud providers documentation for other ingresses like NGINX.
+
+```yaml
+nsi-envoy:
+  enabled: true
+
+  service:
+    port: 443
+    type: ClusterIP
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: haproxy
+      ingress.kubernetes.io/ssl-passthrough: "true"
+    hosts:
+      - host: dds.example.domain
+        paths:
+        - path: /
+          backend:
+            serviceName: nsi-node-nsi-envoy
+            servicePort: 443
+      - host: safnari.example.domain
+        paths:
+        - path: /
+          backend:
+            serviceName: nsi-node-nsi-envoy
+            servicePort: 443
+      - host: opennsa.example.domain
+        paths:
+        - path: /
+          backend:
+            serviceName: nsi-node-nsi-envoy
+            servicePort: 443
+```
+
 ## Deploy
 
 Deploying a NSI node roughly involves the following steps:
@@ -307,7 +385,7 @@ an alternate location.
 
 ### Create chart configuration
 
-The `create-config.sh` script creates a NSI-node chart configuration.Additional
+The `create-config.sh` script creates a NSI-node chart configuration. Additional
 debug output can be enabled with the `-d` switch. By default it will use the
 certificates and templates from the `config` folder, an alternate config folder
 location can be specified with the `-c` switch. Creating a chart config
@@ -327,23 +405,56 @@ involves the following steps:
 ### Install or upgrade deployment
 
 There are two secrets that should be created before the NSI-node chart is
-installed. These secrets are stored in a per deployment specific K8S secret
-that uses a name based on the NSI-node chart deployment name. The
+installed. These secrets are stored in a per deployment specific k8s secret
+that uses a name based on the NSI-node chart deployment name: `<deployment
+name>-secret`. Make sure to create the k8s secret with the correct name
+otherwise references from the library charts will not work. The
 POSTGRES_PASSWORD must be passed on the helm command line, not only for the
-first install but also when you upgrade your NSI-node helm deployment.
+first install but also when you upgrade your NSI-node helm deployment. A CI
+based deployment can store both secrets in CI variables and integrate the
+deploy commands below into the CI script. 
 
 ```shell
-kubectl create secret generic example-nsi-node-secret \
-        --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" \
-        --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
-POSTGRES_PASSWORD=`kubectl get secret example-nsi-node-secret \
-        -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
+kubectl create secret generic example-nsi-node-secret --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
+POSTGRES_PASSWORD=`kubectl get secret example-nsi-node-secret -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
 ./create-config.sh
-helm upgrade \
-        --install \
-        --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD \
-        example-nsi-node .
+helm upgrade --install --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD example-nsi-node .
 ```
 
 While upgrading the configuration of an exiting NSI-node deployment you can use
 the above commands as well but skip the creation of the secret.
+
+## Debug
+
+Of course all the usual k8s tools will work to debug your deployment, usually
+this suffices.
+
+### Envoy proxy
+
+An easy way to tune the log detail of a running Envoy proxy is to set the log
+level through the admin interface. First forward the admin interface port to
+localhost:
+
+```shell
+port-forward <nsi-envoy pod name> 8081:8081
+```
+
+Have a look at the available loggers and their configured level:
+
+```shell
+curl --request POST "http://localhost:8081/logging"
+```
+
+Change log level to debug on all loggers:
+
+```shell
+curl --request POST "http://localhost:8081/logging?level=debug"
+```
+
+Or only set a single logger to level debug. Suggested is to start set loggers
+`conn_handler` and `router` to level debug:
+
+```shell
+curl --request POST "http://localhost:8081/logging?conn_handler=debug"
+curl --request POST "http://localhost:8081/logging?router=debug"
+```
