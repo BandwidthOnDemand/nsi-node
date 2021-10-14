@@ -1,3 +1,4 @@
+---
 ##############################################################################
 #                                                                            #
 # Network Service Interface Distributed Document Service                     #
@@ -5,7 +6,10 @@
 ##############################################################################
 nsi-dds:
   enabled: true
-  
+
+  # podAnnotations:
+  #   linkerd.io/inject: disabled
+
   image:
     repository: ghcr.io/bandwidthondemand/nsi-dds
     pullPolicy: IfNotPresent
@@ -24,12 +28,12 @@ nsi-dds:
     failureThreshold: 5
     periodSeconds: 6
     timeoutSeconds: 5
-  
+
   serviceAccount:
     create: false
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    # The name of the service account to use.  If not set and create is true, a
+    # name is generated using the fullname template
     name: ""
 
   service:
@@ -37,10 +41,10 @@ nsi-dds:
     port: 80
     containerPort: 8401
     type: ClusterIP
-  #  type: LoadBalancer
-  #  ipAddress: 145.101.126.224
-  #  annotations:
-  #    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    # type: LoadBalancer
+    # ipAddress: 145.101.126.224
+    # annotations:
+    #   service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
   ingress:
     enabled: false
@@ -55,7 +59,7 @@ nsi-dds:
       - secretName: tls-secret-api
         hosts:
           - front.example.domain
-  
+
   resources:
     requests:
       memory: 0.5Gi
@@ -75,13 +79,16 @@ nsi-dds:
 nsi-pce:
   enabled: true
 
+  # podAnnotations:
+  #   linkerd.io/inject: disabled
+
   image:
     repository: ghcr.io/bandwidthondemand/nsi-pce
     pullPolicy: IfNotPresent
     # tag overrides the image tag whose default is the chart appVersion
     tag: "2.0.5"
     home: "/nsi-pce"
-  
+
   startupProbe:
     enabled: false
     failureThreshold: 30
@@ -93,25 +100,25 @@ nsi-pce:
     failureThreshold: 5
     periodSeconds: 6
     timeoutSeconds: 5
-  
+
   serviceAccount:
     create: false
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    # The name of the service account to use.  If not set and create is true, a
+    # name is generated using the fullname template
     name: ""
 
   service:
     name: nsi-pce
     port: 80
     containerPort: 8080
-  # configure either ClusterIP or LoadBalancer + ipAddress
+    # configure either ClusterIP or LoadBalancer + ipAddress
     type: ClusterIP
-  #  type: LoadBalancer
-  #  ipAddress: 1.2.3.4
-  #  annotations:
-  #    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-  
+    # type: LoadBalancer
+    # ipAddress: 1.2.3.4
+    # annotations:
+    #   service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
   ingress:
     enabled: false
     annotations:
@@ -120,10 +127,10 @@ nsi-pce:
     hosts:
       - host: chart-example.local
         paths:
-        - path: /
-          backend:
-            serviceName: chart-example.local
-            servicePort: 80
+          - path: /
+            backend:
+              serviceName: chart-example.local
+              servicePort: 80
     tls:
       - secretName: chart-example-tls
         hosts:
@@ -149,13 +156,16 @@ nsi-pce:
 ##############################################################################
 nsi-safnari:
   enabled: true
-  
+
+  # podAnnotations:
+  #   linkerd.io/inject: disabled
+
   image:
     repository: ghcr.io/bandwidthondemand/nsi-safnari
     pullPolicy: IfNotPresent
     # tag overrides the image tag whose default is the chart appVersion
-    tag: "2.1.3.3"
-  
+    tag: "2.1.3.5"
+
   startupProbe:
     enabled: true
     failureThreshold: 30
@@ -171,21 +181,21 @@ nsi-safnari:
   serviceAccount:
     create: false
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    # The name of the service account to use.  If not set and create is true, a
+    # name is generated using the fullname template
     name: ""
 
   service:
     name: "nsi-safnari"
     port: 80
     containerPort: 8080
-  # configure either ClusterIP or LoadBalancer + ipAddress
+    # configure either ClusterIP or LoadBalancer + ipAddress
     type: ClusterIP
-  #  type: LoadBalancer
-  #  ipAddress: 1.2.3.4
-  #  annotations:
-  #    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-  
+    # type: LoadBalancer
+    # ipAddress: 1.2.3.4
+    # annotations:
+    #   service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
   ingress:
     enabled: false
     annotations:
@@ -194,14 +204,14 @@ nsi-safnari:
     hosts:
       - host: chart-example.local
         paths:
-        - path: /
-          backend:
-            serviceName: chart-example.local
-            servicePort: 80
-    tls:
-      - secretName: chart-example-tls
-        hosts:
-          - chart-example.local
+          - path: /
+            backend:
+              serviceName: chart-example.local
+              servicePort: 80
+  tls:
+    - secretName: chart-example-tls
+      hosts:
+        - chart-example.local
 
   resources:
     requests:
@@ -211,13 +221,13 @@ nsi-safnari:
       memory: 0.6Gi
       cpu: 1000m
 
-  postgresql:
-    enabled: false
-
   config:
     name: "nsi-safnari-config"
     mountPath: "/config"
     configFilesGlob: "config/*"
+
+  postgresql:
+    enabled: false
 
 ##############################################################################
 #                                                                            #
@@ -227,33 +237,36 @@ nsi-safnari:
 nsi-envoy:
   enabled: true
 
+  # podAnnotations:
+  #   linkerd.io/inject: disabled
+
   replicaCount: 1
-  
+
   image:
     repository: ghcr.io/bandwidthondemand/nsi-envoy
     pullPolicy: IfNotPresent
     # tag overrides the image tag whose default is the chart appVersion
-    tag: "1.17.4"
+    tag: "1.17.5"
 
   livenessProbe:
-    enabled: true
+    enabled: false
     port: 8081
 
   readinessProbe:
-    enabled: true
+    enabled: false
     port: 8081
-  
+
   serviceAccount:
     create: false
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    # The name of the service account to use.  If not set and create is true, a
+    # name is generated using the fullname template
     name: ""
 
   service:
-    #type: ClusterIP
+    # type: ClusterIP
     type: LoadBalancer
-    ipAddress: "145.101.126.222"
+    ipAddress: "1.2.3.4"
     port: 443
     annotations:
       service.beta.kubernetes.io/azure-load-balancer-internal: "true"
@@ -263,26 +276,26 @@ nsi-envoy:
     annotations:
       kubernetes.io/ingress.class: haproxy
       haproxy.kubernetes.io/ssl-passthrough: "true"
-      #kubernetes.io/tls-acme: "true"
+      # kubernetes.io/tls-acme: "true"
     hosts:
       - host: dds.example.domain
         paths:
-        - path: /
-          backend:
-            serviceName: nsi-node-nsi-envoy
-            servicePort: 443
+          - path: /
+            backend:
+              serviceName: nsi-node-nsi-envoy
+              servicePort: 443
       - host: safnari.example.domain
         paths:
-        - path: /
-          backend:
-            serviceName: nsi-node-nsi-envoy
-            servicePort: 443
+          - path: /
+            backend:
+              serviceName: nsi-node-nsi-envoy
+              servicePort: 443
     tls:
       - hosts:
           - dds.example.domain
           - safnari.example.domain
-        #secretName: nsi-tls
-  
+        secretName: nsi-tls
+
   resources:
     requests:
       memory: 100Mi
@@ -304,11 +317,14 @@ nsi-envoy:
 nsi-opennsa:
   enabled: true
 
+  # podAnnotations:
+  #   linkerd.io/inject: disabled
+
   image:
     repository: ghcr.io/bandwidthondemand/nsi-opennsa
     pullPolicy: IfNotPresent
     # tag 0verrides the image tag whose default is the chart appVersion.
-    tag: ""
+    tag: "3.0.1.10"
 
   startupProbe:
     enabled: false
@@ -325,20 +341,20 @@ nsi-opennsa:
   serviceAccount:
     create: false
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    # The name of the service account to use.  If not set and create is true, a
+    # name is generated using the fullname template
     name: ""
 
   service:
     name: "nsi-opennsa"
     port: 80
-    containerPort: 9080
-  # configure either ClusterIP or LoadBalancer + ipAddress
+    containerPort: 8080
+    # configure either ClusterIP or LoadBalancer + ipAddress
     type: ClusterIP
-  #  type: LoadBalancer
-  #  ipAddress: 1.2.3.4
-  #  annotations:
-  #    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    # type: LoadBalancer
+    # ipAddress: 1.2.3.4
+    # annotations:
+    #   service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
   ingress:
     enabled: false
@@ -348,11 +364,11 @@ nsi-opennsa:
     hosts:
       - host: chart-example.local
         paths:
-        - path: /
-          backend:
-            serviceName: chart-example.local
-            servicePort: 80
-    tls: []
+          - path: /
+            backend:
+              serviceName: chart-example.local
+              servicePort: 80
+    tls:
       - secretName: chart-example-tls
         hosts:
           - chart-example.local
@@ -391,15 +407,26 @@ nsi-opennsa:
 ##############################################################################
 postgresql:
   enabled: true
-  postgresqlUsername: nsi-node-user
-  postgresqlPassword:
-  postgresqlDatabase:
+
+  # master:
+  #   podAnnotations:
+  #     linkerd.io/inject: disabled
+
   image:
     tag: 9.6.21
+    debug: true
+
+  postgresqlUsername: nsi-node-user
+  postgresqlPassword: ""
+
   persistence:
     size: 1Gi
   resources:
     requests:
       memory: 500Mi
+      cpu: 100m
+    limits:
+      memory: 1Gi
+      cpu: 1000m
   volumePermissions:
     enabled: true

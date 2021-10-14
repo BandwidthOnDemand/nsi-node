@@ -1,4 +1,5 @@
 .*.swp
+.idea
 values.yaml
 Chart.lock
 config/
