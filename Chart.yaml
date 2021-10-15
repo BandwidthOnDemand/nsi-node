@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.1.6
+version: 0.1.7
 
 dependencies:
   - name: nsi-dds
@@ -25,6 +25,10 @@ dependencies:
     version: "1.1.0"
     repository: "@nsi-node"
     condition: nsi-opennsa.enabled
+  - name: nsi-requester
+    version: "0.0.1"
+    repository: "@nsi-node"
+    condition: nsi-requester.enabled
   - name: postgresql
     version: ">=9.6 <10"
     repository: "@bitnami"
