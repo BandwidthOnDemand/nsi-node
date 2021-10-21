@@ -43,7 +43,7 @@ ifExistExecute() {
 
 checkConfigFolders() {
     configFolders=()
-    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa
+    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa nsi-requester
     do
         appEnabled ${app} || continue
         case ${app} in
@@ -70,6 +70,11 @@ checkConfigFolders() {
                 configFolders+="${configBaseFolder}/nsi-opennsa/certificates/key"
                 configFolders+="${configBaseFolder}/nsi-opennsa/certificates/trust"
                 configFolders+="${configBaseFolder}/nsi-opennsa/backends"
+                ;;
+            nsi-requester )
+                configFolders+="${configBaseFolder}/nsi-opennsa/templates"
+                configFolders+="${configBaseFolder}/nsi-opennsa/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-opennsa/certificates/trust"
                 ;;
         esac
     done
@@ -119,6 +124,8 @@ copyConfigFiles() {
             configFiles+=opennsa.nrm
             configFiles+=opennsa.tac
             ;;
+        nsi-requester )
+            ;;
     esac
     for file in ${configFiles}
     do
@@ -161,16 +168,16 @@ getHelmCharts()
 {
     test ! -f Chart.yaml && log ERROR cannot find Chart.yaml && exit 1
     test ! -f values.yaml && log ERROR cannot find values.yaml && exit 1
-    helm dependency update --skip-refresh || { log ERROR helm dependency update failed; exit 1 }
+    helm dependency update || { log ERROR helm dependency update failed; exit 1 }
     (
         cd charts
-        rm -rf nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa postgresql && log DEBUG "removed old chart folders"
+        rm -rf nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa nsi-requester postgresql && log DEBUG "removed old chart folders"
         for chart in *.tgz
         do
             tar -xf "$chart" && rm -f "$chart"
         done
     )
-    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa
+    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa nsi-requester
     do
         if appEnabled ${app} && test ! -d "charts/${app}/config"
         then
@@ -265,7 +272,7 @@ createEnvoyConfig() {
     ifExistExecute DEBUG "${envoyConfig}" 'rm ${file} && log DEBUG removed old ${file}'
     log DEBUG "adding skeleton config ..."
     ifExistExecute ERROR "${configBaseFolder}/nsi-envoy/templates/envoy-head.yaml" "cat \${file} >>${envoyConfig}"
-    for app in nsi-dds nsi-safnari nsi-opennsa
+    for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester
     do
         appEnabled ${app} || continue
         log INFO "copying ${app} key and chain to envoy config folder"
@@ -282,7 +289,7 @@ createEnvoyConfig() {
         done
     done
     echo "  clusters:" >>${envoyConfig}
-    for app in nsi-dds nsi-safnari nsi-opennsa
+    for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester
     do
         appEnabled ${app} || continue
         log DEBUG "adding ${app} cluster config ..."
@@ -329,6 +336,18 @@ createOpennsaConfig() {
     copyConfigFiles "nsi-opennsa" ${configFolder} ${runtimeConfigFolder}
 }
 
+#
+# create nsi-requester config
+#
+createNsiRequesterConfig() {
+    log INFO "======================"
+    log INFO "nsi-requester"
+    log INFO "======================"
+    configFolder="${configBaseFolder}/nsi-requester"
+    runtimeConfigFolder="charts/nsi-requester/config"
+    runtimeCertificatesFolder="charts/nsi-requester/certificates"
+}
+
 createPostgresqlConfig() {
     log INFO "======================"
     log INFO "POSTGRESQL"
@@ -372,5 +391,7 @@ checkConfigFolders
 getHelmCharts
 createAppConfig
 appEnabled nsi-opennsa && createOpennsaConfig
+appEnabled nsi-requester && createNsiRequesterConfig
 appEnabled nsi-envoy && createEnvoyConfig
 appEnabled postgresql && createPostgresqlConfig
+exit 0
