@@ -38,6 +38,13 @@ authorisation.
 * [Debug](#debug)
   * [Envoy proxy](#envoy-proxy)
 
+## Known issues
+
+* nsi-safnari
+  * [HTTP client does not do SNI](https://github.com/BandwidthOnDemand/nsi-safnari/issues/21)
+* nsi-dds
+  * [No available signature authentication scheme while deploying to Kubernetes](https://github.com/BandwidthOnDemand/nsi-dds/issues/11)
+
 ## Installation
 
 ### Helm chart repositories
