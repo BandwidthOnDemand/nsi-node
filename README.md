@@ -12,6 +12,7 @@ authorisation.
 
 **Table of Contents**
 
+* [Known issues](#known-issues)
 * [Installation](#installation)
   * [Helm chart repositories](#helm-chart-repositories)
   * [NSI\-node chart](#nsi-node-chart)
