@@ -125,6 +125,7 @@ copyConfigFiles() {
             configFiles+=opennsa.tac
             ;;
         nsi-requester )
+            configFiles+=config-overrides.conf
             ;;
     esac
     for file in ${configFiles}
@@ -190,7 +191,7 @@ getHelmCharts()
 # create per Java app config
 #
 createAppConfig() {
-    for app in nsi-dds nsi-safnari nsi-pce
+    for app in nsi-dds nsi-safnari nsi-pce nsi-requester
     do
         appEnabled ${app} || continue
         log INFO "======================"
@@ -336,18 +337,6 @@ createOpennsaConfig() {
     copyConfigFiles "nsi-opennsa" ${configFolder} ${runtimeConfigFolder}
 }
 
-#
-# create nsi-requester config
-#
-createNsiRequesterConfig() {
-    log INFO "======================"
-    log INFO "nsi-requester"
-    log INFO "======================"
-    configFolder="${configBaseFolder}/nsi-requester"
-    runtimeConfigFolder="charts/nsi-requester/config"
-    runtimeCertificatesFolder="charts/nsi-requester/certificates"
-}
-
 createPostgresqlConfig() {
     log INFO "======================"
     log INFO "POSTGRESQL"
@@ -391,7 +380,6 @@ checkConfigFolders
 getHelmCharts
 createAppConfig
 appEnabled nsi-opennsa && createOpennsaConfig
-appEnabled nsi-requester && createNsiRequesterConfig
 appEnabled nsi-envoy && createEnvoyConfig
 appEnabled postgresql && createPostgresqlConfig
 exit 0
