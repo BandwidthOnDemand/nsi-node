@@ -3,7 +3,7 @@ entries:
   nsi-dds:
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2021-10-22T13:55:25.775859+02:00"
+    created: "2021-10-26T14:40:34.528358+02:00"
     description: A Helm chart for Kubernetes
     digest: 30e621c71c900e1ee1ab820b7399b6b608ff5992f5033d85b9d07d0254c83b48
     name: nsi-dds
@@ -13,7 +13,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2021-10-22T13:55:25.774494+02:00"
+    created: "2021-10-26T14:40:34.526319+02:00"
     description: A Helm chart for Kubernetes
     digest: 9fe4c04dcb9c7e75efb2e97197d2e5c0d6da06b5365e54b78114a491488bb6dd
     name: nsi-dds
@@ -24,7 +24,17 @@ entries:
   nsi-envoy:
   - apiVersion: v2
     appVersion: 1.17.5
-    created: "2021-10-22T13:55:25.7802+02:00"
+    created: "2021-10-26T14:40:34.534742+02:00"
+    description: Helm chart for nsi-envoy
+    digest: 7d6b1955418082d2b4569bfce69a3ceb60747a4d1f5827caffd750003d07856a
+    name: nsi-envoy
+    type: application
+    urls:
+    - nsi-envoy-1.1.4.tgz
+    version: 1.1.4
+  - apiVersion: v2
+    appVersion: 1.17.5
+    created: "2021-10-26T14:40:34.533378+02:00"
     description: Helm chart for nsi-envoy
     digest: 962842ef74c31e7bc2a6ec70f28839f6a6be4c4ff8ce9d8201644812d7067f65
     name: nsi-envoy
@@ -34,7 +44,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-10-22T13:55:25.778965+02:00"
+    created: "2021-10-26T14:40:34.531922+02:00"
     description: Helm chart for nsi-envoy
     digest: 4f3045a91ef06e6d91799902fb90109e45cba2c2bd8bb03ab1a40b3357d91162
     name: nsi-envoy
@@ -44,7 +54,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-10-22T13:55:25.77782+02:00"
+    created: "2021-10-26T14:40:34.530791+02:00"
     description: Helm chart for nsi-envoy
     digest: dc1dd16abf1c22c919602ed0b674a570caa5310f5d36e3d226d19a9336e92914
     name: nsi-envoy
@@ -54,7 +64,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-10-22T13:55:25.776764+02:00"
+    created: "2021-10-26T14:40:34.529188+02:00"
     description: Helm chart for nsi-envoy
     digest: 594ee46bac46e9db86d1d5c90b5fb32305c9fb1aff5c51e62bcd3428bbdbe888
     name: nsi-envoy
@@ -65,7 +75,7 @@ entries:
   nsi-opennsa:
   - apiVersion: v2
     appVersion: 3.0.1.7
-    created: "2021-10-22T13:55:25.7872+02:00"
+    created: "2021-10-26T14:40:34.54102+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -81,7 +91,7 @@ entries:
   nsi-pce:
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-10-22T13:55:25.7914+02:00"
+    created: "2021-10-26T14:40:34.546231+02:00"
     description: Helm chart for nsi-pce
     digest: 08000b42617101bec53c31c91af8963fcbbbf4989c33eb06ee9965930eb569d2
     name: nsi-pce
@@ -91,7 +101,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-10-22T13:55:25.789859+02:00"
+    created: "2021-10-26T14:40:34.54387+02:00"
     description: Helm chart for nsi-pce
     digest: 561f1e8c62aa4a1da5a863c861ac6b13f9feeedc63605e60caf14eaa571d5fca
     name: nsi-pce
@@ -101,7 +111,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2021-10-22T13:55:25.788433+02:00"
+    created: "2021-10-26T14:40:34.542334+02:00"
     description: Helm chart for nsi-pce
     digest: ac21f22486c014dff032bb800eadee87f79fc5753df8f7374d99a5f5e51f60a0
     name: nsi-pce
@@ -112,7 +122,7 @@ entries:
   nsi-requester:
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2021-10-22T13:55:25.795832+02:00"
+    created: "2021-10-26T14:40:34.5511+02:00"
     description: Helm chart to deploy nsi-requester to Kubernetes
     digest: bf5e2e5d87ddff6cc9b3c18fa87459ed167d1599d666c540ca272a2b5ce0eacc
     name: nsi-requester
@@ -122,7 +132,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2021-10-22T13:55:25.793202+02:00"
+    created: "2021-10-26T14:40:34.548587+02:00"
     description: Helm chart to deploy nsi-requester to Kubernetes
     digest: d4099d6b8d7327ae75839ecedac8b2680dfe6f57399fea2f68f9aceed009a6ea
     name: nsi-requester
@@ -133,7 +143,7 @@ entries:
   nsi-safnari:
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-10-22T13:55:25.81124+02:00"
+    created: "2021-10-26T14:40:34.56701+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -148,7 +158,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-10-22T13:55:25.806392+02:00"
+    created: "2021-10-26T14:40:34.562044+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -163,7 +173,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2021-10-22T13:55:25.800488+02:00"
+    created: "2021-10-26T14:40:34.556723+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -176,4 +186,4 @@ entries:
     urls:
     - nsi-safnari-1.1.0.tgz
     version: 1.1.0
-generated: "2021-10-22T13:55:25.772765+02:00"
+generated: "2021-10-26T14:40:34.524075+02:00"
