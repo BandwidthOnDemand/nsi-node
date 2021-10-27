@@ -172,6 +172,9 @@ the NSI-node chart.
 ```ignorelang
 config
 └── nsi-safnari
+    ├── certificates
+    │   ├── key
+    │   └── trust
     └── templates
         ├── config-overrides.conf
         ├── create-postgres-db.sh
@@ -208,6 +211,9 @@ At least the following should be configured:
 ```ignorelang
 config
 └── nsi-dds
+    ├── certificates
+    │   ├── key
+    │   └── trust
     └── templates
         ├── dds.xml
         ├── envoy-cluster.yaml
@@ -239,6 +245,9 @@ At least the following should be configured:
 ```ignorelang
 config
 └── nsi-pce
+    ├── certificates
+    │   ├── key
+    │   └── trust
     └── templates
         ├── beans.xml
         ├── http.json
@@ -259,6 +268,9 @@ At least the following should be configured:
 config
 └── nsi-opennsa
     ├── backends
+    ├── certificates
+    │   ├── key
+    │   └── trust
     └── templates
         ├── create-postgres-db.sh
         ├── envoy-cluster.yaml
