@@ -264,7 +264,7 @@ config
         ├── envoy-cluster.yaml
         ├── envoy-filter_chain_match.yaml
         ├── opennsa.conf
-        ├── opennsa.nrm
+        ├── *.nrm
         └── opennsa.tac
 ```
 
@@ -291,8 +291,9 @@ At least the following should be configured:
     * Update the postgresql service name and namespace.
   * **[dud:topology]**
     * Update the backend module and corresponding topology.
-* **opennsa.nrm**
-  * Update the network resource map to reflect the STP's your network is exposing.
+* ***.nrm**
+  * Add at least one network resource map to reflect the STP's in the topology you are exposing.
+    Any filename with suffix `.nrm` will be included.
 
 #### nsi-envoy
 
