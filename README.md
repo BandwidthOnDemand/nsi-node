@@ -271,6 +271,7 @@ config
     ├── certificates
     │   ├── key
     │   └── trust
+    ├── credentials
     └── templates
         ├── create-postgres-db.sh
         ├── envoy-cluster.yaml
@@ -280,7 +281,11 @@ config
         └── opennsa.tac
 ```
 
-The needed backend(s) can be copied to the `backends` folder.
+The needed backend(s) can be copied to the `backends` folder and will be
+available inside the container under `/backends`.
+
+Any optional credentials needed by a backend can be added to the `credentials` folder
+and will be available inside the container directly under `/config`
 
 At least the following should be configured:
 

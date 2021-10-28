@@ -101,7 +101,7 @@ copyConfigFiles() {
     local app=$1
     local configFolder=$2
     local runtimeConfigFolder=$3
-    log INFO "installing config file(s)"
+    log INFO "install config file(s)"
     configFiles=()
     case ${app} in
         nsi-dds )
@@ -213,7 +213,7 @@ createAppConfig() {
                 continue
             fi
             CNs+="${commonName}"
-            log INFO "adding certificate to truststore: ${commonName}"
+            log INFO "add certificate to truststore: ${commonName}"
             keytool -import -destkeystore "${truststore}" -alias "${commonName}" -storepass secret -noprompt -file "${certificate}" 2>/dev/null || log ERROR "could not import certificate"
         done
         #
@@ -232,10 +232,10 @@ createAppConfig() {
         fi
         ifExistExecute DEBUG "${keystore}" 'rm ${file} && log DEBUG removed old ${file}'
         commonName=`getCertificateCommonName "${certificate}"`
-        log DEBUG "creating p12 keystore"
-        log INFO "adding certificate to keystore: ${commonName}"
+        log DEBUG "creat p12 keystore"
+        log INFO "add certificate to keystore: ${commonName}"
         openssl pkcs12 -export -name "${commonName}" -in "${certificate}" -inkey "${key}" -out "${p12tmpkeystore}" -CAfile "${tmpchain}" -password pass:secret -chain
-        log DEBUG "converting pkcs12 keystore to jks"
+        log DEBUG "convert pkcs12 keystore to jks"
         keytool -importkeystore -destkeystore "${keystore}" -srckeystore "${p12tmpkeystore}" -srcstoretype pkcs12 -srcstorepass secret -storepass secret -alias "${commonName}" -noprompt 2>/dev/null ||
             log ERROR "could not covert keystore from p12 to jks"
         ifExistExecute DEBUG "${p12tmpkeystore}" 'rm ${file} && log DEBUG removed ${file}'
@@ -263,19 +263,19 @@ createEnvoyConfig() {
             log WARN "could not find any CA to trust!"
             break
         fi
-        log INFO "adding CA to envoy chain:" `getCertificateCommonName "${certificate}"`
+        log INFO "add CA to envoy chain:" `getCertificateCommonName "${certificate}"`
         openssl x509 -noout -subject -issuer -in "${certificate}" >>"${envoyCaChain}"
         cat "${certificate}" >>"${envoyCaChain}"
     done
     envoyConfig="charts/nsi-envoy/config/envoy.yaml"
-    log DEBUG "creating envoy config"
+    log DEBUG "creat envoy config"
     ifExistExecute DEBUG "${envoyConfig}" 'rm ${file} && log DEBUG removed old ${file}'
-    log DEBUG "adding skeleton config ..."
+    log DEBUG "add skeleton config ..."
     ifExistExecute ERROR "${configBaseFolder}/nsi-envoy/templates/envoy-head.yaml" "cat \${file} >>${envoyConfig}"
     for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester
     do
         appEnabled ${app} || continue
-        log INFO "copying ${app} key and chain to envoy config folder"
+        log INFO "copy ${app} key and chain to envoy config folder"
         cat ${configBaseFolder}/${app}/certificates/key/*.key >charts/nsi-envoy/config/${app}.key
         cat ${configBaseFolder}/${app}/certificates/key/*.{crt,chain} >charts/nsi-envoy/config/${app}.chain
         ifExistExecute ERROR "${configBaseFolder}/${app}/templates/envoy-filter_chain_match.yaml" "cat \${file} >>${envoyConfig}"
@@ -284,7 +284,7 @@ createEnvoyConfig() {
         do
             spki=`createSpki "${certificate}"`
             commonName=`getCertificateCommonName "${certificate}"`
-            log INFO "adding SPKI to ${app} envoy config: ${commonName}"
+            log INFO "add SPKI to ${app} envoy config: ${commonName}"
             echo "              - \"${spki}\" # ${commonName}" >>${envoyConfig}
         done
     done
@@ -292,7 +292,7 @@ createEnvoyConfig() {
     for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester
     do
         appEnabled ${app} || continue
-        log DEBUG "adding ${app} cluster config ..."
+        log DEBUG "add ${app} cluster config ..."
         ifExistExecute ERROR "${configBaseFolder}/${app}/templates/envoy-cluster.yaml" "cat \${file} >>${envoyConfig}"
     done
 }
@@ -315,26 +315,35 @@ createOpennsaConfig() {
         certificateHash=`openssl x509 -noout -hash -in ${certificate}`
         commonName=`getCertificateCommonName "${certificate}"`
         cp -p "${certificate}" "${runtimeCertificatesFolder}/${certificateHash}.0" && \
-            log INFO "adding certificate ${certificateHash}.0: ${commonName}" || \
-            log ERROR "cannot install certificate ${certificate}"
+            log INFO "add certificate ${certificateHash}.0: ${commonName}" || \
+            log ERROR "cannot add certificate: ${certificate}"
     done
     find "${configFolder}/backends" -type f -depth 1 -print | while read backend
     do
         cp -p "${backend}" "${runtimeBackendsFolder}" && \
-            log INFO "adding backend: "`basename "${backend}"` || \
-            log ERROR "cannot install backend: "`basename "${backend}"`
+            log INFO "add backend: "`basename "${backend}"` || \
+            log ERROR "cannot add backend: ${backend}"
     done
     find "${configFolder}/templates" -type f -name "*.nrm" -depth 1 -print | while read nrm
     do
         cp -p "${nrm}" "${runtimeConfigFolder}" && \
-            log INFO "adding nrm file: "`basename "${nrm}"` || \
-            log ERROR "cannot install backend: "`basename "${nrm}"`
+            log INFO "add nrm file: "`basename "${nrm}"` || \
+            log ERROR "cannot add  nrm file: ${nrm}"
     done
+    if test -d "${configFolder}/credentials"
+    then
+        find "${configFolder}/credentials" -type f -depth 1 -print | while read credential
+        do
+            cp -p "${credential}" "${runtimeConfigFolder}" && \
+                log INFO "add credential: "`basename "${credential}"` || \
+                log ERROR "cannot add credential: ${credential}"
+        done
+    fi
     cp -p ${configFolder}/certificates/key/*.key ${runtimeConfigFolder}/server.key && \
-        log INFO "adding server key" || \
+        log INFO "add server key" || \
         log ERROR "cannot add  server key"
     cp -p ${configFolder}/certificates/key/*.crt ${runtimeConfigFolder}/server.crt && \
-        log INFO "adding server certificate" || \
+        log INFO "add server certificate" || \
         log ERROR "cannot add  server certificate"
     #
     # copy config files
@@ -351,7 +360,7 @@ createPostgresqlConfig() {
         appEnabled ${app} || continue
         configFolder="${configBaseFolder}/${app}"
         cp -p "${configFolder}/templates/create-postgres-db.sh" "${postgresqlInitDb}/${app}.sh" 2>/dev/null && \
-            log INFO "installing ${app} init db script" || \
+            log INFO "install ${app} init db script" || \
             log ERROR "cannot install ${app} init db script"
     done
 }
@@ -367,7 +376,7 @@ do
             ;;
         c )
             configBaseFolder="${OPTARG}"
-            log DEBUG "using ${configBaseFolder} as configuration folder"
+            log DEBUG "use ${configBaseFolder} as configuration folder"
             ;;
         ":" )
             log ERROR "option -${OPTARG} requires an argument"
