@@ -31,7 +31,7 @@ authorisation.
     * [nsi\-envoy](#nsi-envoy)
   * [Expose node to the outside world](#expose-node-to-the-outside-world)
     * [With k8s LoadBalancer IP](#with-k8s-loadbalancer-ip)
-    * [Witch k8s ingress](#witch-k8s-ingress)
+    * [With k8s ingress](#with-k8s-ingress)
 * [Deploy](#deploy)
   * [Check certificates and chains](#check-certificates-and-chains)
   * [Create chart configuration](#create-chart-configuration)
@@ -351,7 +351,7 @@ nsi-envoy:
     enabled: false
 ```
 
-#### Witch k8s ingress
+#### With k8s ingress
 
 Another way is to have your `ingress` route the set of virtual hostnames to
 your `nsi-envoy` service. This example uses an HAProxy based ingress, consult
@@ -403,7 +403,7 @@ Deploying a NSI node roughly involves the following steps:
 ### Check certificates and chains
 
 The  `check-certificates.sh` script checks for every found certificate, files
-with suffix `.crt`, if a complete chain can be found using the files witch
+with suffix `.crt`, if a complete chain can be found using the files with
 suffix `.chain`. It will also check if no certificates or parts of a chain are
 expired. By default all trust folders of all applications are checked. The `-d`
 switch can be ussed to check just one trust folder or a set of certificates in
