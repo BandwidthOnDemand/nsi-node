@@ -204,7 +204,7 @@ createAppConfig() {
         CNs=()
         truststore="charts/${app}/config/${app}-truststore.jks"
         ifExistExecute DEBUG "${truststore}" 'rm ${file} && log DEBUG removed old ${file}'
-        find "${configFolder}/certificates/trust" \( -name '*.crt' -o -name '*.chain' \) -depth 1 -print | while read certificate
+        find "${configFolder}/certificates/trust" \( -name '*.crt' -o -name '*.chain' \) -maxdepth 1 -print | while read certificate
         do
             commonName=`getCertificateCommonName "${certificate}"`
             if (($CNs[(I)$commonName]))
@@ -280,7 +280,7 @@ createEnvoyConfig() {
         cat ${configBaseFolder}/${app}/certificates/key/*.{crt,chain} >charts/nsi-envoy/config/${app}.chain
         ifExistExecute ERROR "${configBaseFolder}/${app}/templates/envoy-filter_chain_match.yaml" "cat \${file} >>${envoyConfig}"
         echo "              verify_certificate_spki:" >>${envoyConfig}
-        find "${configBaseFolder}/${app}/certificates/trust" -name '*.crt' -depth 1 -print | while read certificate
+        find "${configBaseFolder}/${app}/certificates/trust" -name '*.crt' -maxdepth 1 -print | while read certificate
         do
             spki=`createSpki "${certificate}"`
             commonName=`getCertificateCommonName "${certificate}"`
@@ -310,7 +310,7 @@ createOpennsaConfig() {
     runtimeBackendsFolder="charts/nsi-opennsa/backends"
     mkdir "${runtimeCertificatesFolder}" || log ERROR "cannot create ${runtimeCertificatesFolder}"
     mkdir "${runtimeBackendsFolder}" || log ERROR "cannot create ${runtimeBackendsFolder}"
-    find "${configFolder}"/certificates/{trust,key} \( -name '*.crt' -o -name '*.chain' \) -depth 1 -print | while read certificate
+    find "${configFolder}"/certificates/{trust,key} \( -name '*.crt' -o -name '*.chain' \) -maxdepth 1 -print | while read certificate
     do
         certificateHash=`openssl x509 -noout -hash -in ${certificate}`
         commonName=`getCertificateCommonName "${certificate}"`
@@ -318,13 +318,13 @@ createOpennsaConfig() {
             log INFO "add certificate ${certificateHash}.0: ${commonName}" || \
             log ERROR "cannot add certificate: ${certificate}"
     done
-    find "${configFolder}/backends" -type f -depth 1 -print | while read backend
+    find "${configFolder}/backends" -type f -maxdepth 1 -print | while read backend
     do
         cp -p "${backend}" "${runtimeBackendsFolder}" && \
             log INFO "add backend: "`basename "${backend}"` || \
             log ERROR "cannot add backend: ${backend}"
     done
-    find "${configFolder}/templates" -type f -name "*.nrm" -depth 1 -print | while read nrm
+    find "${configFolder}/templates" -type f -name "*.nrm" -maxdepth 1 -print | while read nrm
     do
         cp -p "${nrm}" "${runtimeConfigFolder}" && \
             log INFO "add nrm file: "`basename "${nrm}"` || \
@@ -332,7 +332,7 @@ createOpennsaConfig() {
     done
     if test -d "${configFolder}/credentials"
     then
-        find "${configFolder}/credentials" -type f -depth 1 -print | while read credential
+        find "${configFolder}/credentials" -type f -maxdepth 1 -print | while read credential
         do
             cp -p "${credential}" "${runtimeConfigFolder}" && \
                 log INFO "add credential: "`basename "${credential}"` || \
