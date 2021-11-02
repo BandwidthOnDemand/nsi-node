@@ -10,6 +10,8 @@ with a [Postgresql](https://bitnami.com/stack/postgresql/helm) database and
 [Envoy](https://github.com/BandwidthOnDemand/nsi-envoy) proxy for access
 authorisation.
 
+![NSI-node overview image](docs/nsi-node-overview.drawio.png)
+
 **Table of Contents**
 
 * [Known issues](#known-issues)
