@@ -68,6 +68,13 @@ loadChainCertificates() {
     find "$1" -maxdepth 1 -name '*.chain' -print |
         while read file
         do
+            #
+            # skip if certificate is not a file (also works for broken symlinks)
+            #
+            if ! test -f "$file"
+            then
+                continue
+            fi
             getCertificateDetails "$file"
             if test -z "$subjectKey"
             then
@@ -117,6 +124,13 @@ verifyCertificateChains() {
     find "$1" -maxdepth 1 -name '*.crt' -print |
         while read file
         do
+            #
+            # skip if certificate is not a file (also works for broken symlinks)
+            #
+            if ! test -f "$file"
+            then
+                continue
+            fi
             #
             # get and print certificate info
             #
