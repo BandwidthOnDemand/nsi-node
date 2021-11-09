@@ -72,9 +72,9 @@ checkConfigFolders() {
                 configFolders+="${configBaseFolder}/nsi-opennsa/backends"
                 ;;
             nsi-requester )
-                configFolders+="${configBaseFolder}/nsi-opennsa/templates"
-                configFolders+="${configBaseFolder}/nsi-opennsa/certificates/key"
-                configFolders+="${configBaseFolder}/nsi-opennsa/certificates/trust"
+                configFolders+="${configBaseFolder}/nsi-requester/templates"
+                configFolders+="${configBaseFolder}/nsi-requester/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-requester/certificates/trust"
                 ;;
         esac
     done
