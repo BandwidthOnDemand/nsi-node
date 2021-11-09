@@ -249,7 +249,7 @@ nsi-envoy:
     repository: ghcr.io/bandwidthondemand/nsi-envoy
     pullPolicy: IfNotPresent
     # tag overrides the image tag whose default is the chart appVersion
-    tag: "1.17.5"
+    tag: "1.20-0"
 
   livenessProbe:
     enabled: false
