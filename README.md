@@ -4,42 +4,42 @@ NSI-node is a [Helm](https://helm.sh/) chart to install a configurable
 combination of the NSI aggregator
 [Safnari](https://github.com/BandwidthOnDemand/nsi-safnari) and
 [PCE](https://github.com/BandwidthOnDemand/nsi-pce), [Document Distribution
-Service](https://github.com/BandwidthOnDemand/nsi-dds) and network service
-agent [OpenNSA](https://github.com/BandwidthOnDemand/nsi-opennsa), together
-with a [Postgresql](https://bitnami.com/stack/postgresql/helm) database and
+Service](https://github.com/BandwidthOnDemand/nsi-dds), network service agent
+[OpenNSA](https://github.com/BandwidthOnDemand/nsi-opennsa) and [NSI requester
+client](https://github.com/BandwidthOnDemand/nsi-requester), together with a
+[Postgresql](https://bitnami.com/stack/postgresql/helm) database and
 [Envoy](https://github.com/BandwidthOnDemand/nsi-envoy) proxy for access
 authorisation.
 
-![NSI-node overview image](docs/nsi-node-overview.drawio.png)
+![NSI-node overview image](docs/nsi-node-overview.png)
 
 **Table of Contents**
 
 * [Known issues](#known-issues)
+* [How it works in a nutshell](#how-it-works-in-a-nutshell)
+  * [Distributed Document Service (DDS)](#distributed-document-service-dds)
+  * [Patch Computation Element (PCE)](#patch-computation-element-pce)
+  * [Safnari NSI Aggregator](#safnari-nsi-aggregator)
+  * [OpenNSA NSI uPA](#opennsa-nsi-upa)
+  * [NSI Requester Web GUI](#nsi-requester-web-gui)
+  * [PostgreSQL database](#postgresql-database)
+  * [Envoy proxy](#envoy-proxy)
 * [Installation](#installation)
   * [Helm chart repositories](#helm-chart-repositories)
   * [NSI\-node chart](#nsi-node-chart)
-    * [Local copy](#local-copy)
-    * [Configuration repository](#configuration-repository)
   * [Helm deployment values](#helm-deployment-values)
 * [Configuration](#configuration)
   * [Folder layout](#folder-layout)
   * [Enable/disable applications](#enabledisable-applications)
   * [Certificates](#certificates)
   * [Application configuration files](#application-configuration-files)
-    * [nsi\-safnari](#nsi-safnari)
-    * [nsi\-dds](#nsi-dds)
-    * [nsi\-pce](#nsi-pce)
-    * [nsi\-opennsa](#nsi-opennsa)
-    * [nsi\-envoy](#nsi-envoy)
   * [Expose node to the outside world](#expose-node-to-the-outside-world)
-    * [With k8s LoadBalancer IP](#with-k8s-loadbalancer-ip)
-    * [With k8s ingress](#with-k8s-ingress)
 * [Deploy](#deploy)
   * [Check certificates and chains](#check-certificates-and-chains)
   * [Create chart configuration](#create-chart-configuration)
   * [Install or upgrade deployment](#install-or-upgrade-deployment)
 * [Debug](#debug)
-  * [Envoy proxy](#envoy-proxy)
+  * [Envoy proxy](#envoy-proxy-1)
 
 ## Known issues
 
@@ -47,6 +47,121 @@ authorisation.
   * [HTTP client does not do SNI](https://github.com/BandwidthOnDemand/nsi-safnari/issues/21)
 * nsi-dds
   * [No available signature authentication scheme while deploying to Kubernetes](https://github.com/BandwidthOnDemand/nsi-dds/issues/11)
+
+## How it works in a nutshell
+
+A terse description on how an automated GOLE NSI node functions can be found
+below. For more background information please have a look at the following
+documents:
+
+* [Network Services Framework v2.0](https://www.ogf.org/documents/GFD.213.pdf) 
+* [Network Service Interface Signaling and Path Finding](https://www.ogf.org/documents/GFD.217.pdf)
+* [Network Service Agent Description](https://www.ogf.org/documents/GFD.220.pdf)
+* [NSI Authentication and Authorization](http://www.ogf.org/documents/GFD.232.pdf)
+* [Applying Policy in the NSI Environment](https://www.ogf.org/documents/GFD.233.pdf)
+* [Network Service Interface Signaling and Path Finding](http://www.ogf.org/documents/GFD.234.pdf)
+* [NSI Connection Service v2.1](http://www.ogf.org/documents/GFD.237.pdf)
+* [Error Handling in NSI CS 2.1](http://www.ogf.org/documents/GFD.235.pdf)
+* [Network Service Interface Document Distribution Service](http://www.ogf.org/documents/GFD.236.pdf)
+
+### Distributed Document Service (DDS)
+
+The DDS serves as a central storage for all documents needed in a NSI
+infrastructure. Currently two types of documents are hosted: discovery
+documents of type  `vnd.ogf.nsi.nsa.v1+xml` and topology documents of type
+`vnd.ogf.nsi.topology.v2+xml`. The DDS is configured to retrieve these
+documents from Network Service Agents (NSA) and will periodically check for
+updates. To reduce the data transport and processing overhead the
+`If-Modified-Since` HTTP header is used during update checks. When a discovery
+document is fetched the DDS will subsequently also automatically fetch all
+topology documents mentioned in the discovery document.
+
+The DDS also has a publish/subscribe interface to synchronise its content with
+other DDS. This allows for redundancy, by having the same document fetched by
+multiple DDS, and not every DDS needs to fetch every document itself, allowing
+the setup of geographical or administrative zones.
+
+A GUI is available at https://dds.example.domain/dds/portal to view the
+following:
+
+* Server Configuration: the NSA id and configured documents and subscriptions
+* Subscription: from other DDS
+* My Subscriptions: to other DDS
+* Documents: all discovery and topology documents present at this DDS with the ability to view the contents
+
+### Patch Computation Element (PCE)
+
+The PCE fetches all topology documents present at the DDS to build a global
+view of network connectivity. It does this by matching Service Termination
+Points (STP) from all topology documents to form Service Demarcation Points
+(SDP) where two topologies are connected. The PCE periodically checks the DDS
+for updated documents and updates the connectivity graph as needed. The PCE
+accepts path computation requests to find a path between a set of STP. It will
+first check if the STP exist and then calculate the shortest path between them.
+On success the PCE will return an ordered list of path segments, each segment
+described by two STP in the same network, that together form a string of cross
+connects that implement the requested connectivity.
+
+Besides the STP connectivity graph the PCE also constructs a control plane
+connectivity graph by matching the peersWith attributes from all discovery
+documents. This allows for routing of NSI requests via other NSA if no direct
+control plane connectivity exists.
+
+### Safnari NSI Aggregator
+
+The Safnari NSI Aggregator receives NSI requests, sends back a confirmation of
+receipt in the same control plan connection, and in case of a synchronous
+request will also send back the result in that same first connection. In case
+of an asynchronous request the result is returned to the reply-to address in
+the request after completion. In case of a reservation request the aggregator
+asks the PCE to calculate a path, sends per path segment requests to child NSA,
+receives the replies from child NSA and returns an aggregated state to the
+requester. The discovery document of this NSA is located at
+https://safnari.example.domain/nsa-discovery.
+
+A GUI is available at https://safnari.example.domain that shows an overview of
+the currently present connections. Per connections the overall state is shown
+together with a complete log of every synchronous or asynchronous NSI message
+received and sent.
+
+### OpenNSA NSI uPA
+
+OpenNSA is a NSI ultimate Provider Agent (uPA) that interfaces between NSI and
+the local network. The pluggable backends allow for interfacing towards a local
+Network Resource Manager (NRM) or talk directly to a local network element.
+Recently OpenNSA also has partial aggregation support that allows for hosting
+multiple network topologies on a single OpenNSA instance. The discovery
+document of this NSA is located at
+https://opennsa.example.domain/NSI/discovery.xml.
+
+OpenNSA uses the plugable backend system to interface to the local network
+resources. The OpenNSA topology configuration file maps STP and SDP to local
+port indentifiers and VLAN ranges.
+
+### NSI Requester Web GUI
+
+The NSI Requester Web GUI is a NSI protocol debug tool that can be used to
+construct and send NSI messages via a web GUI. Per message sent it shows the
+message sent together with all synchronous and asynchronous messages received.
+Support is available for reserve, commit, provision, release and terminate
+primitives, as well as querying all connections and events.
+
+### PostgreSQL database
+
+A single PostgreSQL database is used to store the databases for Safnari and
+OpenNSA. The same username and password is used by both.
+
+### Envoy proxy
+
+The Envoy proxy is the interface between the Kubernetes ingress or service
+loadBalancer IP and the Kubernetes services in front of DDS, Safnari, OpenNSA
+and NSI Requester. All TLS connections are terminated on the proxy. A per
+application list of certificate Subject Public Key Information hashes is
+maintained to check if a connecting client is allowed access or not.
+Communication inside the cluster is plain HTTP.
+
+For personal access to the GUI, API or documents served by all applications a
+personal certificate needs to be configured per application.
 
 ## Installation
 
