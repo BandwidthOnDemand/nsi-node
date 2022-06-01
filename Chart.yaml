@@ -29,6 +29,14 @@ dependencies:
     version: "0.0.2"
     repository: "@nsi-node"
     condition: nsi-requester.enabled
+  - name: supa
+    version: "0.0.1"
+    repository: "@nsi-node"
+    condition: supa.enabled
+  - name: polynsi
+    version: "0.0.1"
+    repository: "@nsi-node"
+    condition: polynsi.enabled
   - name: postgresql
     version: ">=9.6 <10"
     repository: "@bitnami"
