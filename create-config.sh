@@ -76,6 +76,11 @@ checkConfigFolders() {
                 configFolders+="${configBaseFolder}/nsi-requester/certificates/key"
                 configFolders+="${configBaseFolder}/nsi-requester/certificates/trust"
                 ;;
+            polynsi )
+                configFolders+="${configBaseFolder}/nsi-requester/templates"
+                configFolders+="${configBaseFolder}/nsi-requester/certificates/key"
+                configFolders+="${configBaseFolder}/nsi-requester/certificates/trust"
+                ;;
         esac
     done
     local error=false
@@ -125,6 +130,9 @@ copyConfigFiles() {
             ;;
         nsi-requester )
             configFiles+=config-overrides.conf
+            ;;
+        polynsi )
+            configFiles+=application.properties
             ;;
     esac
     for file in ${configFiles}
@@ -177,7 +185,7 @@ getHelmCharts()
             tar -xf "$chart" && rm -f "$chart"
         done
     )
-    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa nsi-requester
+    for app in nsi-safnari nsi-pce nsi-dds nsi-envoy nsi-opennsa nsi-requester polynsi
     do
         if appEnabled ${app} && test ! -d "charts/${app}/config"
         then
@@ -190,7 +198,7 @@ getHelmCharts()
 # create per Java app config
 #
 createAppConfig() {
-    for app in nsi-dds nsi-safnari nsi-pce nsi-requester
+    for app in nsi-dds nsi-safnari nsi-pce nsi-requester polynsi
     do
         appEnabled ${app} || continue
         log INFO "======================"
@@ -202,7 +210,7 @@ createAppConfig() {
         # create truststore
         #
         CNs=()
-        truststore="charts/${app}/config/${app}-truststore.jks"
+        truststore="${runtimeConfigFolder}/${app}-truststore.jks"
         ifExistExecute DEBUG "${truststore}" 'rm ${file} && log DEBUG removed old ${file}'
         find "${configFolder}/certificates/trust" \( -name '*.crt' -o -name '*.chain' \) -maxdepth 1 -print | while read certificate
         do
@@ -219,7 +227,7 @@ createAppConfig() {
         #
         # create keystore
         #
-        keystore="charts/${app}/config/${app}-keystore.jks"
+        keystore="${runtimeConfigFolder}/${app}-keystore.jks"
         p12tmpkeystore="`mktemp`"
         tmpchain="`mktemp`"
         cat ${configFolder}/certificates/key/*.chain >$tmpchain
@@ -268,11 +276,11 @@ createEnvoyConfig() {
         cat "${certificate}" >>"${envoyCaChain}"
     done
     envoyConfig="charts/nsi-envoy/config/envoy.yaml"
-    log DEBUG "creat envoy config"
+    log DEBUG "create envoy config"
     ifExistExecute DEBUG "${envoyConfig}" 'rm ${file} && log DEBUG removed old ${file}'
     log DEBUG "add skeleton config ..."
     ifExistExecute ERROR "${configBaseFolder}/nsi-envoy/templates/envoy-head.yaml" "cat \${file} >>${envoyConfig}"
-    for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester
+    for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester polynsi
     do
         appEnabled ${app} || continue
         log INFO "copy ${app} key and chain to envoy config folder"
@@ -289,7 +297,7 @@ createEnvoyConfig() {
         done
     done
     echo "  clusters:" >>${envoyConfig}
-    for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester
+    for app in nsi-dds nsi-safnari nsi-opennsa nsi-requester polynsi
     do
         appEnabled ${app} || continue
         log DEBUG "add ${app} cluster config ..."
