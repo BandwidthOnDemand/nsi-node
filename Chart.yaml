@@ -38,6 +38,6 @@ dependencies:
     repository: "@nsi-node"
     condition: polynsi.enabled
   - name: postgresql
-    version: ">=9.6 <10"
+    version: "<11"
     repository: "@bitnami"
     condition: postgresql.enabled
