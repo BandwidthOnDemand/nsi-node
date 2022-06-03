@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.1.16
+version: 0.1.17
 
 dependencies:
   - name: nsi-dds
@@ -34,7 +34,7 @@ dependencies:
     repository: "@nsi-node"
     condition: supa.enabled
   - name: polynsi
-    version: "0.0.2"
+    version: "0.0.3"
     repository: "@nsi-node"
     condition: polynsi.enabled
   - name: postgresql
