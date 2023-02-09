@@ -133,6 +133,7 @@ copyConfigFiles() {
             ;;
         polynsi )
             configFiles+=application.properties
+            configFiles+=logback-spring.xml
             ;;
     esac
     for file in ${configFiles}
