@@ -5,8 +5,10 @@ combination of the NSI aggregator
 [Safnari](https://github.com/BandwidthOnDemand/nsi-safnari) and
 [PCE](https://github.com/BandwidthOnDemand/nsi-pce), [Document Distribution
 Service](https://github.com/BandwidthOnDemand/nsi-dds), network service agent
-[OpenNSA](https://github.com/BandwidthOnDemand/nsi-opennsa) and [NSI requester
-client](https://github.com/BandwidthOnDemand/nsi-requester), together with a
+[OpenNSA](https://github.com/BandwidthOnDemand/nsi-opennsa), ultimate provide agent
+[SuPA](https://github.com/workfloworchestrator/SuPA) in combination with NSI SOAP/gRPC proxy
+[PolyNSI](https://github.com/workfloworchestrator/PolyNSI), and
+[NSI requester client](https://github.com/BandwidthOnDemand/nsi-requester), together with a
 [Postgresql](https://bitnami.com/stack/postgresql/helm) database and
 [Envoy](https://github.com/BandwidthOnDemand/nsi-envoy) proxy for access
 authorisation.
@@ -21,6 +23,7 @@ authorisation.
   * [Patch Computation Element (PCE)](#patch-computation-element-pce)
   * [Safnari NSI Aggregator](#safnari-nsi-aggregator)
   * [OpenNSA NSI uPA](#opennsa-nsi-upa)
+  * [SuPA NSI uPA and PolyNSI](#supa-nsi-upa-and-polynsi)
   * [NSI Requester Web GUI](#nsi-requester-web-gui)
   * [PostgreSQL database](#postgresql-database)
   * [Envoy proxy](#envoy-proxy)
@@ -129,14 +132,24 @@ received and sent.
 OpenNSA is a NSI ultimate Provider Agent (uPA) that interfaces between NSI and
 the local network. The pluggable backends allow for interfacing towards a local
 Network Resource Manager (NRM) or talk directly to a local network element.
-Recently OpenNSA also has partial aggregation support that allows for hosting
+OpenNSA also has partial aggregation support that allows for hosting
 multiple network topologies on a single OpenNSA instance. The discovery
 document of this NSA is located at
 https://opennsa.example.domain/NSI/discovery.xml.
 
-OpenNSA uses the plugable backend system to interface to the local network
+OpenNSA uses the pluggable backend system to interface to the local network
 resources. The OpenNSA topology configuration file maps STP and SDP to local
-port indentifiers and VLAN ranges.
+port identifiers and VLAN ranges.
+
+### SuPA NSI uPA and PolyNSI
+
+SuPA is a complete new NSI ultimate provider agent that uses modern design
+patterns and implements the latest NSI protocol specification. It offers a gRPC
+based version of the NSI protocol and is accompanied by PolyNSI that acts as a
+NSI SOAP/gRPC proxy to interface with existing SOAP based NSA. It also has a
+pluggable backend mechanism and offers both manual and automated topology
+generation. The discovery document of this NSA is located at
+https://supa.example.domain/NSI/discovery.
 
 ### NSI Requester Web GUI
 
@@ -236,6 +249,7 @@ config
 ├── nsi-envoy
 ├── nsi-opennsa
 ├── nsi-pce
+├── polynsi
 └── nsi-safnari
 ```
 
@@ -428,6 +442,31 @@ At least the following should be configured:
 * ***.nrm**
   * Add at least one network resource map to reflect the STP's in the topology you are exposing.
     Any filename with suffix `.nrm` will be included.
+
+#### polynsi
+
+```ignorelang
+config
+└── polynsi
+    ├── certificates
+    │   ├── key
+    │   └── trust
+    └── templates
+        ├── application.properties
+        ├── envoy-cluster.yaml
+        └── envoy-filter_chain_match.yaml
+```
+
+Please refer to the
+[PolyNSI configuration documentation](https://github.com/workfloworchestrator/PolyNSI#configuration)
+for more information.
+
+#### supa
+
+SuPA is configured with an inline `supa.env` in the nsi-node `values.yaml` configuration.
+Please refer to the
+[SuPA configuration documentation](https://workfloworchestrator.org/SuPA/index.html)
+for more information.
 
 #### nsi-envoy
 
