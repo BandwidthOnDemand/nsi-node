@@ -7,7 +7,7 @@ levels[WARN]=2
 levels[ERROR]=3
 script_logging_level="INFO"
 configBaseFolder="config"
-postgresqlInitDb="charts/postgresql/files/docker-entrypoint-initdb.d"
+postgresqlInitDb="charts/postgresql/initdb.d"
 
 
 log() {
@@ -364,6 +364,7 @@ createPostgresqlConfig() {
     log INFO "======================"
     log INFO "POSTGRESQL"
     log INFO "======================"
+    mkdir -p "${postgresqlInitDb}" && log DEBUG "created folder ${postgresqlInitDb}"
     for app in nsi-safnari nsi-opennsa
     do
         appEnabled ${app} || continue

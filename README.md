@@ -586,25 +586,21 @@ involves the following steps:
 
 ### Install or upgrade deployment
 
-There are two secrets that should be created before the NSI-node chart is
-installed. These secrets are stored in a per deployment specific k8s secret
-that uses a name based on the NSI-node chart deployment name: `<deployment
-name>-secret`. Make sure to create the k8s secret with the correct name
-otherwise references from the library charts will not work. The
-`POSTGRES_PASSWORD` must be passed on the helm command line, not only for the
-first install but also when you upgrade your NSI-node helm deployment. A CI
-based deployment can store both secrets in CI variables and integrate the
-deploy commands below into the CI script. 
+The `deploy.sh` script will run the `create-config.sh` script mentioned above,
+and will create all needed secrets, except for the postgres password. All
+secrets are stored in a per deployment specific k8s secret that uses a name
+based on the NSI-node chart deployment name: `<deployment name>-secret`. The
+postgres password must by past to the `deploy.sh` script via the
+`POSTGRES_PASSWORD` shell variable.  A CI based deployment can store the
+postgres password as a CI secret and have it passed to the deploy script when
+the deploy pipeline is being run.
 
 ```shell
-kubectl create secret generic example-nsi-node-secret --from-literal=POSTGRES_PASSWORD="`head -c 33 /dev/urandom | base64`" --from-literal=SAFNARI_APPLICATION_SECRET="`head -c 33 /dev/urandom | base64`"
-POSTGRES_PASSWORD=`kubectl get secret example-nsi-node-secret -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 --decode`
-./create-config.sh
-helm upgrade --install --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD example-nsi-node .
+POSTGRES_PASSWORD="secret password" ./deploy -d "deployment_name" -n "namespace" -c "config_folder"
 ```
 
 While upgrading the configuration of an exiting NSI-node deployment you can use
-the above commands as well but skip the creation of the secret.
+the above command as well.
 
 ## Debug
 
