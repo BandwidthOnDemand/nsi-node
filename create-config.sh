@@ -223,7 +223,7 @@ createAppConfig() {
             fi
             CNs+="${commonName}"
             log INFO "add certificate to truststore: ${commonName}"
-            keytool -import -destkeystore "${truststore}" -alias "${commonName}" -storepass secret -noprompt -file "${certificate}" 2>/dev/null || log ERROR "could not import certificate"
+            keytool -import -destkeystore "${truststore}" -deststoretype jks -alias "${commonName}" -storepass secret -noprompt -file "${certificate}" 2>/dev/null || log ERROR "could not import certificate"
         done
         #
         # create keystore
@@ -245,7 +245,7 @@ createAppConfig() {
         log INFO "add certificate to keystore: ${commonName}"
         openssl pkcs12 -export -name "${commonName}" -in "${certificate}" -inkey "${key}" -out "${p12tmpkeystore}" -CAfile "${tmpchain}" -password pass:secret -chain
         log DEBUG "convert pkcs12 keystore to jks"
-        keytool -importkeystore -destkeystore "${keystore}" -srckeystore "${p12tmpkeystore}" -srcstoretype pkcs12 -srcstorepass secret -storepass secret -alias "${commonName}" -noprompt 2>/dev/null ||
+        keytool -importkeystore -destkeystore "${keystore}" -deststoretype jks -srckeystore "${p12tmpkeystore}" -srcstoretype pkcs12 -srcstorepass secret -storepass secret -alias "${commonName}" -noprompt 2>/dev/null ||
             log ERROR "could not covert keystore from p12 to jks"
         ifExistExecute DEBUG "${p12tmpkeystore}" 'rm ${file} && log DEBUG removed ${file}'
         ifExistExecute DEBUG "${tmpchain}" 'rm ${file} && log DEBUG removed ${file}'
