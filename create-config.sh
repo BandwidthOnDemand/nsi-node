@@ -127,6 +127,7 @@ copyConfigFiles() {
         nsi-opennsa )
             configFiles+=opennsa.conf
             configFiles+=opennsa.tac
+            configFiles+=initdb.sh
             ;;
         nsi-requester )
             configFiles+=config-overrides.conf
