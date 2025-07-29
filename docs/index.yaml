@@ -3,7 +3,7 @@ entries:
   nsi-dds:
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2025-07-29T14:01:23.077201+02:00"
+    created: "2025-07-29T16:58:51.63788+02:00"
     description: A Helm chart for Kubernetes
     digest: 30e621c71c900e1ee1ab820b7399b6b608ff5992f5033d85b9d07d0254c83b48
     name: nsi-dds
@@ -13,7 +13,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.26
-    created: "2025-07-29T14:01:23.07141+02:00"
+    created: "2025-07-29T16:58:51.63288+02:00"
     description: A Helm chart for Kubernetes
     digest: 9fe4c04dcb9c7e75efb2e97197d2e5c0d6da06b5365e54b78114a491488bb6dd
     name: nsi-dds
@@ -24,7 +24,7 @@ entries:
   nsi-envoy:
   - apiVersion: v2
     appVersion: 1.20.1
-    created: "2025-07-29T14:01:23.101045+02:00"
+    created: "2025-07-29T16:58:51.665326+02:00"
     description: Helm chart for nsi-envoy
     digest: e375f57ded7b6eab88c330c1f279af2399712bb0223661fbe082fce9a1381df1
     name: nsi-envoy
@@ -34,7 +34,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.17.5
-    created: "2025-07-29T14:01:23.097153+02:00"
+    created: "2025-07-29T16:58:51.66099+02:00"
     description: Helm chart for nsi-envoy
     digest: 7d6b1955418082d2b4569bfce69a3ceb60747a4d1f5827caffd750003d07856a
     name: nsi-envoy
@@ -44,7 +44,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.17.5
-    created: "2025-07-29T14:01:23.093543+02:00"
+    created: "2025-07-29T16:58:51.657129+02:00"
     description: Helm chart for nsi-envoy
     digest: 962842ef74c31e7bc2a6ec70f28839f6a6be4c4ff8ce9d8201644812d7067f65
     name: nsi-envoy
@@ -54,7 +54,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-29T14:01:23.090297+02:00"
+    created: "2025-07-29T16:58:51.652429+02:00"
     description: Helm chart for nsi-envoy
     digest: 4f3045a91ef06e6d91799902fb90109e45cba2c2bd8bb03ab1a40b3357d91162
     name: nsi-envoy
@@ -64,7 +64,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-29T14:01:23.086027+02:00"
+    created: "2025-07-29T16:58:51.647641+02:00"
     description: Helm chart for nsi-envoy
     digest: dc1dd16abf1c22c919602ed0b674a570caa5310f5d36e3d226d19a9336e92914
     name: nsi-envoy
@@ -74,7 +74,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-29T14:01:23.0816+02:00"
+    created: "2025-07-29T16:58:51.642633+02:00"
     description: Helm chart for nsi-envoy
     digest: 594ee46bac46e9db86d1d5c90b5fb32305c9fb1aff5c51e62bcd3428bbdbe888
     name: nsi-envoy
@@ -85,7 +85,7 @@ entries:
   nsi-opennsa:
   - apiVersion: v2
     appVersion: opennsa-3.0.2-1c76f34-1
-    created: "2025-07-29T14:01:23.144191+02:00"
+    created: "2025-07-29T16:58:51.704768+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -100,7 +100,7 @@ entries:
     version: 1.2.7
   - apiVersion: v2
     appVersion: 3.0.2-1
-    created: "2025-07-29T14:01:23.135605+02:00"
+    created: "2025-07-29T16:58:51.698209+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -115,7 +115,7 @@ entries:
     version: 1.2.5
   - apiVersion: v2
     appVersion: 3.0.2-1
-    created: "2025-07-29T14:01:23.128312+02:00"
+    created: "2025-07-29T16:58:51.692721+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -130,7 +130,7 @@ entries:
     version: 1.2.4
   - apiVersion: v2
     appVersion: 3.0.2-1
-    created: "2025-07-29T14:01:23.120705+02:00"
+    created: "2025-07-29T16:58:51.687014+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -145,7 +145,7 @@ entries:
     version: 1.2.3
   - apiVersion: v2
     appVersion: 3.0.1.17
-    created: "2025-07-29T14:01:23.113472+02:00"
+    created: "2025-07-29T16:58:51.679494+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -160,7 +160,7 @@ entries:
     version: 1.2.1
   - apiVersion: v2
     appVersion: 3.0.1.7
-    created: "2025-07-29T14:01:23.107493+02:00"
+    created: "2025-07-29T16:58:51.672964+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -176,7 +176,7 @@ entries:
   nsi-pce:
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2025-07-29T14:01:23.157559+02:00"
+    created: "2025-07-29T16:58:51.713885+02:00"
     description: Helm chart for nsi-pce
     digest: 08000b42617101bec53c31c91af8963fcbbbf4989c33eb06ee9965930eb569d2
     name: nsi-pce
@@ -186,7 +186,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2025-07-29T14:01:23.153119+02:00"
+    created: "2025-07-29T16:58:51.71104+02:00"
     description: Helm chart for nsi-pce
     digest: 561f1e8c62aa4a1da5a863c861ac6b13f9feeedc63605e60caf14eaa571d5fca
     name: nsi-pce
@@ -196,7 +196,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 2.0.5
-    created: "2025-07-29T14:01:23.149436+02:00"
+    created: "2025-07-29T16:58:51.708028+02:00"
     description: Helm chart for nsi-pce
     digest: ac21f22486c014dff032bb800eadee87f79fc5753df8f7374d99a5f5e51f60a0
     name: nsi-pce
@@ -207,7 +207,7 @@ entries:
   nsi-requester:
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2025-07-29T14:01:23.179845+02:00"
+    created: "2025-07-29T16:58:51.732577+02:00"
     description: Helm chart to deploy nsi-requester to Kubernetes
     digest: fc1b526eb6c99296d345e77f9ae45c81333d55ae0c7d48f21e93c321854f6fe7
     name: nsi-requester
@@ -217,7 +217,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2025-07-29T14:01:23.173892+02:00"
+    created: "2025-07-29T16:58:51.726695+02:00"
     description: Helm chart to deploy nsi-requester to Kubernetes
     digest: dc5a7f45feced26a81fb637384b6ceb3b5edbb6b84f49d0c3d6289856da9e99b
     name: nsi-requester
@@ -227,7 +227,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2025-07-29T14:01:23.167578+02:00"
+    created: "2025-07-29T16:58:51.720208+02:00"
     description: Helm chart to deploy nsi-requester to Kubernetes
     digest: bf5e2e5d87ddff6cc9b3c18fa87459ed167d1599d666c540ca272a2b5ce0eacc
     name: nsi-requester
@@ -237,7 +237,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2025-07-29T14:01:23.16267+02:00"
+    created: "2025-07-29T16:58:51.717559+02:00"
     description: Helm chart to deploy nsi-requester to Kubernetes
     digest: d4099d6b8d7327ae75839ecedac8b2680dfe6f57399fea2f68f9aceed009a6ea
     name: nsi-requester
@@ -248,7 +248,7 @@ entries:
   nsi-safnari:
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.202673+02:00"
+    created: "2025-07-29T16:58:51.750141+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -263,7 +263,7 @@ entries:
     version: 1.1.10
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.250249+02:00"
+    created: "2025-07-29T16:58:51.795173+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -278,7 +278,7 @@ entries:
     version: 1.1.9
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.243084+02:00"
+    created: "2025-07-29T16:58:51.787812+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -293,7 +293,7 @@ entries:
     version: 1.1.8
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.236772+02:00"
+    created: "2025-07-29T16:58:51.782704+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -308,7 +308,7 @@ entries:
     version: 1.1.7
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.229706+02:00"
+    created: "2025-07-29T16:58:51.775818+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -323,7 +323,7 @@ entries:
     version: 1.1.6
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.222929+02:00"
+    created: "2025-07-29T16:58:51.76791+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -338,7 +338,7 @@ entries:
     version: 1.1.5
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.21742+02:00"
+    created: "2025-07-29T16:58:51.762351+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -353,7 +353,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.210054+02:00"
+    created: "2025-07-29T16:58:51.756096+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -368,7 +368,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.195891+02:00"
+    created: "2025-07-29T16:58:51.743621+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -383,7 +383,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 2.1.3.4
-    created: "2025-07-29T14:01:23.186652+02:00"
+    created: "2025-07-29T16:58:51.738123+02:00"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -399,7 +399,7 @@ entries:
   polynsi:
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.304462+02:00"
+    created: "2025-07-29T16:58:51.844736+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: 274ae8b31c8c825fe3c738e612bec4ff41f0c6d5e4ee756a6559c640e376920a
     name: polynsi
@@ -409,7 +409,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.298282+02:00"
+    created: "2025-07-29T16:58:51.83968+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: 8dda3bb452371a91b334a107253df411664bb184b99241da5ed7988cf28f3ba4
     name: polynsi
@@ -419,7 +419,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.291716+02:00"
+    created: "2025-07-29T16:58:51.834172+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: 596be3ed8c192ae6dbe78185efc42c283222c87c6e7d8c1addac4fd3c640f931
     name: polynsi
@@ -429,7 +429,7 @@ entries:
     version: 0.0.9
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.284715+02:00"
+    created: "2025-07-29T16:58:51.828476+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: ca317d07a83ffc2a361a4b7c02a4eb92f57f835d6a608eaa6fc60b97c9af04b5
     name: polynsi
@@ -439,7 +439,7 @@ entries:
     version: 0.0.8
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.279253+02:00"
+    created: "2025-07-29T16:58:51.824456+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: eb2d32ee51d26b95b5c2f0266e193e29f286aba340e05641daa9f25d32117cb8
     name: polynsi
@@ -449,7 +449,7 @@ entries:
     version: 0.0.7
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.273411+02:00"
+    created: "2025-07-29T16:58:51.817846+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: af00848ae350bcc35826efc3f429a12fe41cf3a3868c179a2d109439e5079e8e
     name: polynsi
@@ -459,7 +459,7 @@ entries:
     version: 0.0.6
   - apiVersion: v2
     appVersion: 0.1.0-1
-    created: "2025-07-29T14:01:23.268095+02:00"
+    created: "2025-07-29T16:58:51.81373+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: aeb17f2c227c5ddf2293bc711f8b9b70a2950433a64be48d539644c854848316
     name: polynsi
@@ -469,7 +469,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 0.0.1-SNAPSHOT-38
-    created: "2025-07-29T14:01:23.264363+02:00"
+    created: "2025-07-29T16:58:51.810825+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: 466f84c2e3830aa3270c937a565bc2b52992effbcffc4c74650dd7420acced00
     name: polynsi
@@ -479,7 +479,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.0.1-SNAPSHOT-38
-    created: "2025-07-29T14:01:23.259534+02:00"
+    created: "2025-07-29T16:58:51.807382+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: 9ae474da5d26dabed6c0744c5ec015914ae134c3013f285681664922911982c3
     name: polynsi
@@ -489,7 +489,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.0.1-SNAPSHOT-38
-    created: "2025-07-29T14:01:23.255701+02:00"
+    created: "2025-07-29T16:58:51.801593+02:00"
     description: Network Service Interface Connecection Service 2.1 SOAP/gRPC proxy
     digest: d18a85390bd58b64f53612e2c9881670da1a1d4e1d31238e2bebbbf70f1294ac
     name: polynsi
@@ -500,7 +500,17 @@ entries:
   supa:
   - apiVersion: v2
     appVersion: latest
-    created: "2025-07-29T14:01:23.32275+02:00"
+    created: "2025-07-29T16:58:51.863659+02:00"
+    description: SURF Network Service Interface ultimate Provider Agent
+    digest: 13eb800f87ca2a9785faf74b35ea7f7e72644c17cc73b4cb02d4abba087d06d4
+    name: supa
+    type: application
+    urls:
+    - supa-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-07-29T16:58:51.860647+02:00"
     description: SURF Network Service Interface ultimate Provider Agent
     digest: e528b7fd26a118aadba346cc7e886fc05f9a8ed709b4519b3f031ad8a7814850
     name: supa
@@ -510,7 +520,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 0.0.1.dev1-11
-    created: "2025-07-29T14:01:23.316996+02:00"
+    created: "2025-07-29T16:58:51.857098+02:00"
     description: SURF Network Service Interface ultimate Provider Agent
     digest: 3cc59bf34b2833d38d042bfb388f6db8b852bce40488708cce85b66f61f1fb96
     name: supa
@@ -520,7 +530,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.0.1.dev1-11
-    created: "2025-07-29T14:01:23.313609+02:00"
+    created: "2025-07-29T16:58:51.853991+02:00"
     description: SURF Network Service Interface ultimate Provider Agent
     digest: fc84cc68b090d830d30c6267bcc6c9005082db27698acf5fbbf4ee51ffb36394
     name: supa
@@ -530,7 +540,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.0.1.dev1-11
-    created: "2025-07-29T14:01:23.309158+02:00"
+    created: "2025-07-29T16:58:51.849998+02:00"
     description: SURF Network Service Interface ultimate Provider Agent
     digest: f2948de722b4a90a42cb62eb3e32d0c0e5e1aa3a80d4b482963ef1fd10947af9
     name: supa
@@ -538,4 +548,4 @@ entries:
     urls:
     - supa-0.0.1.tgz
     version: 0.0.1
-generated: "2025-07-29T14:01:23.065838+02:00"
+generated: "2025-07-29T16:58:51.626638+02:00"
