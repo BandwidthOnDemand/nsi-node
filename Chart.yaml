@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.1.49
+version: 0.1.50
 
 dependencies:
   - name: nsi-dds
@@ -30,7 +30,7 @@ dependencies:
     repository: "@nsi-node"
     condition: nsi-requester.enabled
   - name: supa
-    version: "0.0.12"
+    version: "0.0.13"
     repository: "@nsi-node"
     condition: supa.enabled
   - name: polynsi
