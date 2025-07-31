@@ -2,7 +2,7 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.1.60
+version: 0.1.61
 
 dependencies:
   - name: nsi-dds
@@ -10,7 +10,7 @@ dependencies:
     repository: "@nsi-node"
     condition: nsi-dds.enabled
   - name: nsi-pce
-    version: "1.1.5"
+    version: "1.1.6"
     repository: "@nsi-node"
     condition: nsi-pce.enabled
   - name: nsi-safnari
