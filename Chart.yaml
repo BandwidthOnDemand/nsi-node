@@ -2,44 +2,47 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.1.71
+version: 0.2.0
 
+# Subcharts come from the GHCR OCI registries. The "@nsi-node" alias used before
+# pointed at the GitHub Pages repository, frozen on 2026-08-20 and receiving no
+# new versions; the alias form cannot express an OCI location.
 dependencies:
   - name: nsi-dds
-    version: "1.1.15"
-    repository: "@nsi-node"
+    version: "1.5.1"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-dds.enabled
   - name: nsi-pce
-    version: "1.1.15"
-    repository: "@nsi-node"
+    version: "2.1.2"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-pce.enabled
   - name: nsi-safnari
-    version: "1.1.28"
-    repository: "@nsi-node"
+    version: "3.2.2"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-safnari.enabled
   - name: nsi-envoy
-    version: "1.2.0"
-    repository: "@nsi-node"
+    version: "1.2.1"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-envoy.enabled
   - name: nsi-opennsa
-    version: "1.2.5"
-    repository: "@nsi-node"
+    version: "1.2.8"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-opennsa.enabled
   - name: nsi-requester
-    version: "0.0.4"
-    repository: "@nsi-node"
+    version: "0.0.5"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-requester.enabled
   - name: supa
-    version: "0.0.15"
-    repository: "@nsi-node"
+    version: "0.5.2"
+    repository: "oci://ghcr.io/workfloworchestrator/charts"
     condition: supa.enabled
   - name: polynsi
-    version: "0.1.4"
-    repository: "@nsi-node"
+    version: "0.6.1"
+    repository: "oci://ghcr.io/workfloworchestrator/charts"
     condition: polynsi.enabled
   - name: nsi-auth
-    version: "0.0.6"
-    repository: "@nsi-node"
+    version: "0.3.2"
+    repository: "oci://ghcr.io/workfloworchestrator/charts"
     condition: nsi-auth.enabled
   - name: postgresql
     version: "<12"
