@@ -279,17 +279,10 @@ of the chart, or if you want to maintain your NSI-node configuration in a
 separate repository you can add the NSI-node chart as a Git submodule. But any
 other way that suites you purpose will work as well of course. 
 
-> **The umbrella chart still depends on the frozen chart repository.**
-> `Chart.yaml` declares its dependencies through the `"@nsi-node"` repository
-> alias, so `helm dependency update` needs
-> `helm repo add nsi-node https://bandwidthondemand.github.io/nsi-node/` and can
-> only ever resolve versions published before the freeze. The pinned versions
-> are already several releases behind — `nsi-dds`, `nsi-pce` and `nsi-safnari`
-> are pinned at `1.1.x` against a published `1.2.0`, and `supa` is pinned at
-> `0.0.15` while `0.0.13` is what is vendored in `charts/`. The alias form
-> cannot express an OCI location, so repointing these dependencies at
-> `oci://ghcr.io/...` is a prerequisite for the umbrella tracking current
-> charts again. It is tracked separately and has not been done yet.
+`Chart.yaml` resolves its subcharts from the OCI registries, so
+`helm dependency update` needs no `helm repo add` for them. Only the Postgresql
+dependency still comes from a classic repository, so the Bitnami repo does have
+to be added first.
 
 #### Local copy
 
