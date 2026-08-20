@@ -539,3 +539,13 @@ polynsi:
     #    grpc.client.connection_provider.address=static://development-nsi-node-supa-grpc.nsi.svc.cluster.local:80
     #    grpc.client.connection_provider.negotiationType=PLAINTEXT
     #    soap.client.connection_requester.address=http://foo.bar.internal:666/deadend
+##############################################################################
+#                                                                            #
+# NSI Authentication Server                                                  #
+#                                                                            #
+##############################################################################
+# External authorisation endpoint for ingress controllers and gateways, not
+# part of a plain NSI node. This stanza must be present even when unused:
+# Helm ignores a condition it cannot resolve, so omitting it deploys nsi-auth.
+nsi-auth:
+  enabled: false

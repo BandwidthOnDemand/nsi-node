@@ -11,13 +11,20 @@ Service](https://github.com/BandwidthOnDemand/nsi-dds), network service agent
 [NSI requester client](https://github.com/BandwidthOnDemand/nsi-requester), together with a
 [Postgresql](https://bitnami.com/stack/postgresql/helm) database and
 [Envoy](https://github.com/BandwidthOnDemand/nsi-envoy) proxy for access
-authorisation.
+authorisation, optionally with the
+[NSI Authentication Server](https://github.com/workfloworchestrator/nsi-auth)
+as an external authorisation endpoint for ingress controllers and gateways.
+
+The charts for the newer ANA automation components — `nsi-orchestrator`,
+`nsi-orchestrator-ui`, `nsi-dds-proxy`, `nsi-aggregator-proxy`, `nsi-mgmt-info`,
+`nsi-aura` and `ana-automation-ui` — are published alongside these but are not
+part of the NSI-node umbrella chart; they are deployed on their own. See
+[Helm chart repositories](#helm-chart-repositories) for the full inventory.
 
 ![NSI-node overview image](docs/nsi-node-overview.png)
 
 **Table of Contents**
 
-* [Known issues](#known-issues)
 * [How it works in a nutshell](#how-it-works-in-a-nutshell)
   * [Distributed Document Service (DDS)](#distributed-document-service-dds)
   * [Patch Computation Element (PCE)](#patch-computation-element-pce)
@@ -29,6 +36,8 @@ authorisation.
   * [Envoy proxy](#envoy-proxy)
 * [Installation](#installation)
   * [Helm chart repositories](#helm-chart-repositories)
+    * [The frozen nsi\-node chart repository](#the-frozen-nsi-node-chart-repository)
+  * [Publishing a chart](#publishing-a-chart)
   * [NSI\-node chart](#nsi-node-chart)
   * [Helm deployment values](#helm-deployment-values)
 * [Configuration](#configuration)
@@ -40,16 +49,10 @@ authorisation.
 * [Deploy](#deploy)
   * [Check certificates and chains](#check-certificates-and-chains)
   * [Create chart configuration](#create-chart-configuration)
+  * [Create a Java trust store](#create-a-java-trust-store)
   * [Install or upgrade deployment](#install-or-upgrade-deployment)
 * [Debug](#debug)
   * [Envoy proxy](#envoy-proxy-1)
-
-## Known issues
-
-* nsi-safnari
-  * [HTTP client does not do SNI](https://github.com/BandwidthOnDemand/nsi-safnari/issues/21)
-* nsi-dds
-  * [No available signature authentication scheme while deploying to Kubernetes](https://github.com/BandwidthOnDemand/nsi-dds/issues/11)
 
 ## How it works in a nutshell
 
@@ -164,6 +167,12 @@ primitives, as well as querying all connections and events.
 A single PostgreSQL database is used to store the databases for Safnari and
 OpenNSA. The same username and password is used by both.
 
+The per-application databases are created at first start from the
+`create-postgres-db.sh` scripts that `create-config.sh` collects into
+`charts/postgresql/initdb.d/`. `deploy.sh` turns that folder into a ConfigMap
+named `postgresql-init-scripts`, which the chart mounts via
+`postgresql.primary.initdb.scriptsConfigMap`.
+
 ### Envoy proxy
 
 The Envoy proxy is the interface between the Kubernetes ingress or service
@@ -180,15 +189,88 @@ personal certificate needs to be configured per application.
 
 ### Helm chart repositories
 
-For Safnari, PCE, DDS, OpenNSA, Envoy and nsi-node add the NSI-node Helm chart
-repository and for Postgresql add the Bitnami repository and update information
-of available charts locally for the just added chart repositories:
+Charts are published as OCI artifacts to the GitHub Container Registry of the
+organisation that owns the source repository. There is no `helm repo add` step:
+an OCI reference is used directly wherever a chart name would otherwise go.
+
+| Registry | Charts |
+| --- | --- |
+| `oci://ghcr.io/bandwidthondemand/charts` | `nsi-dds`, `nsi-pce`, `nsi-safnari`, `nsi-envoy`, `nsi-opennsa`, `nsi-requester` |
+| `oci://ghcr.io/workfloworchestrator/charts` | `ana-automation-ui`, `nsi-aggregator-proxy`, `nsi-aura`, `nsi-auth`, `nsi-dds-proxy`, `nsi-mgmt-info`, `nsi-orchestrator`, `nsi-orchestrator-ui`, `polynsi`, `supa` |
+
+Inspect and install directly:
 
 ```shell
-helm repo add nsi-node https://bandwidthondemand.github.io/nsi-node/
+helm show chart oci://ghcr.io/bandwidthondemand/charts/nsi-dds --version <version>
+helm upgrade --install nsi-dds oci://ghcr.io/bandwidthondemand/charts/nsi-dds --version <version>
+```
+
+In a `Chart.yaml` dependency the repository is the namespace *without* the chart
+name. The `"@nsi-node"` alias form used by older umbrella charts does not work
+for OCI and must be replaced with the full URL:
+
+```yaml
+dependencies:
+  - name: nsi-dds
+    version: "<version>"
+    repository: "oci://ghcr.io/bandwidthondemand/charts"
+    condition: nsi-dds.enabled
+```
+
+Postgresql still comes from a classic HTTP repository:
+
+```shell
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 ```
+
+#### The frozen `nsi-node` chart repository
+
+`https://bandwidthondemand.github.io/nsi-node/` served every chart until
+2026-08-20 and is **frozen**, not removed: the index and its `.tgz` files stay
+online indefinitely so existing pinned versions keep resolving. It receives no
+new versions. Anything released after the freeze date exists only in the
+registries above.
+
+Note that the `nsi-node` chart itself was never published there — it is used via
+a local copy or a Git submodule, as described below.
+
+### Publishing a chart
+
+Publishing is automated. Each source repository has a `.github/workflows/chart.yml`
+that packages its chart and pushes it to its organisation's namespace when a
+semver git tag is pushed. There is no manual `helm package`, no copying of
+`.tgz` files, and no index to regenerate.
+
+**The chart version is the git tag.** For the application charts it is also the
+`appVersion`, so one number describes both the chart and the application it
+deploys:
+
+```shell
+helm package chart --version "$TAG" --app-version "$TAG"
+```
+
+The `version` and `appVersion` fields in each `Chart.yaml` are placeholders
+(`0.0.0`) and are not maintained by hand. `0.0.0` sorts below every real release
+and names a container image tag that does not exist, so a chart built without
+the injected version fails at image pull rather than deploying something
+unexpected.
+
+To release a chart, tag the source repository:
+
+```shell
+git tag <version> && git push origin <version>
+```
+
+Because there is only one version number, a chart-only fix still needs its own
+patch tag. That also rebuilds the container image, so a "chart-only" release can
+pick up newer base-image layers — worth knowing before releasing one casually.
+
+Three charts are exceptions: `nsi-envoy`, `nsi-opennsa` and `nsi-requester`
+package third-party applications, so their `appVersion` names an upstream
+release (`1.20.1`, `opennsa-3.0.2-1c76f34-1`) that has nothing to do with the
+chart version. For those the tag sets the chart version only, and `appVersion`
+stays a hand-maintained pin of the upstream image.
 
 ### NSI-node chart
 
@@ -196,6 +278,18 @@ There are several ways to use the NSI-node chart, for example use a local copy
 of the chart, or if you want to maintain your NSI-node configuration in a
 separate repository you can add the NSI-node chart as a Git submodule. But any
 other way that suites you purpose will work as well of course. 
+
+> **The umbrella chart still depends on the frozen chart repository.**
+> `Chart.yaml` declares its dependencies through the `"@nsi-node"` repository
+> alias, so `helm dependency update` needs
+> `helm repo add nsi-node https://bandwidthondemand.github.io/nsi-node/` and can
+> only ever resolve versions published before the freeze. The pinned versions
+> are already several releases behind — `nsi-dds`, `nsi-pce` and `nsi-safnari`
+> are pinned at `1.1.x` against a published `1.2.0`, and `supa` is pinned at
+> `0.0.15` while `0.0.13` is what is vendored in `charts/`. The alias form
+> cannot express an OCI location, so repointing these dependencies at
+> `oci://ghcr.io/...` is a prerequisite for the umbrella tracking current
+> charts again. It is tracked separately and has not been done yet.
 
 #### Local copy
 
@@ -205,7 +299,10 @@ Clone the NSI-node repository and add your configuration to the config/ folder:
 git clone https://github.com/BandwidthOnDemand/nsi-node.git
 ```
 
-Changes to the config/ and chart/ folders are ignored by git.
+The `config/` and `charts/` folders are ignored by git, and so are `values.yaml`
+and `Chart.lock`. Your deployment configuration therefore lives outside version
+control in a plain clone — if you want it versioned, use the configuration
+repository layout described below.
 
 #### Configuration repository
 
@@ -230,12 +327,16 @@ To always see the changes to submodules in a diff change your git
 configuration:
 
 ```shell
-git config --global diff.submodule
+git config --global diff.submodule log
 ```
 
 ### Helm deployment values
 
 The NSI-node chart and its application library charts can be configured by editing the `Chart.yaml` and `values.yaml` files. A version with reasonable defaults of the latter file can be found in the examples folder and should be copied to the top folder of the checked out version of the chart.
+
+Note that `examples/values.yaml.example` predates several of the charts it is
+meant to seed — it has no `nsi-auth` section and no Bitnami legacy image pins —
+so treat it as a starting point rather than a current reference.
 
 ## Configuration
 
@@ -249,9 +350,14 @@ config
 ├── nsi-envoy
 ├── nsi-opennsa
 ├── nsi-pce
+├── nsi-requester
+├── nsi-safnari
 ├── polynsi
-└── nsi-safnari
+└── supa
 ```
+
+`supa` is configured inline in `values.yaml` rather than from files, so its
+folder holds only an empty `certificates/key` and `templates`.
 
 And every chart config has a templates sub folder and a certificates sub folder
 for the key and trust certificates, for example nsi-safnari:
@@ -274,9 +380,23 @@ nsi-safnari:
   enabled: true
 ```
 
+The chart conditions are `nsi-dds`, `nsi-pce`, `nsi-safnari`, `nsi-envoy`,
+`nsi-opennsa`, `nsi-requester`, `supa`, `polynsi`, `nsi-auth` and `postgresql`.
+
 Frequently used combinations of applications are Safnari + PCE + DDS +
 Postgresql or OpenNSA + Postgresql. One single database can be used by multiple
 applications.
+
+Note that Helm ignores a condition it cannot resolve, so **omitting a stanza
+enables that component** rather than leaving it out. `examples/values.yaml.example`
+carries all ten, but if you write your own `values.yaml` from scratch, an
+component you simply never mention will be deployed. `nsi-auth` is the easiest
+one to get wrong, since a plain NSI node has no use for it:
+
+```yaml
+nsi-auth:
+  enabled: false
+```
 
 ### Certificates
 
@@ -443,6 +563,27 @@ At least the following should be configured:
   * Add at least one network resource map to reflect the STP's in the topology you are exposing.
     Any filename with suffix `.nrm` will be included.
 
+#### nsi-requester
+
+```ignorelang
+config
+└── nsi-requester
+    ├── certificates
+    │   ├── key
+    │   └── trust
+    └── templates
+        ├── config-overrides.conf
+        ├── envoy-cluster.yaml
+        └── envoy-filter_chain_match.yaml
+```
+
+* **config-overrides.conf**
+  * Play configuration overriding `application.conf`. It takes the application
+    secret from the `NSI_REQUESTER_APPLICATION_SECRET` environment variable that
+    `deploy.sh` puts in the deployment secret, and configures the WS client key
+    and trust stores for two-way TLS against
+    `/config/nsi-requester-keystore.jks` and the matching trust store.
+
 #### polynsi
 
 ```ignorelang
@@ -523,29 +664,33 @@ nsi-envoy:
 
   ingress:
     enabled: true
+    className: haproxy
     annotations:
-      kubernetes.io/ingress.class: haproxy
-      ingress.kubernetes.io/ssl-passthrough: "true"
+      haproxy.kubernetes.io/ssl-passthrough: "true"
     hosts:
       - host: dds.example.domain
         paths:
         - path: /
-          backend:
-            serviceName: nsi-node-nsi-envoy
-            servicePort: 443
+          pathType: Prefix
       - host: safnari.example.domain
         paths:
         - path: /
-          backend:
-            serviceName: nsi-node-nsi-envoy
-            servicePort: 443
+          pathType: Prefix
       - host: opennsa.example.domain
         paths:
         - path: /
-          backend:
-            serviceName: nsi-node-nsi-envoy
-            servicePort: 443
+          pathType: Prefix
 ```
+
+The backend service and port are not configured here — the template always
+points every rule at the `nsi-envoy` service on `service.port`. Older versions
+of this document showed `backend.serviceName`/`servicePort` under each path;
+those keys were always ignored, and the field names themselves belong to the
+`extensions/v1beta1` Ingress removed in Kubernetes 1.22.
+
+The template selects the Ingress `apiVersion` and backend shape from the
+cluster version, so `className` and `pathType` are used on 1.19+ and silently
+dropped on older clusters.
 
 ## Deploy
 
@@ -554,7 +699,12 @@ Deploying a NSI node roughly involves the following steps:
 1. create NSI-node local copy or Git repository with NSI node as submodule, and add you local deployment configuration, certifiates and keys
 2. check the trust certificates and chains with the `check-certificates.sh` script
 3. create a NSI-node chart configuration with the `create-config.sh` script
-4. deploy the NSI-node chart with Helm
+4. if an application needs a Java trust store, create it with the `create-truststore.sh` script
+5. deploy the NSI-node chart with Helm
+
+The scripts need `zsh` (`create-config.sh` and `create-truststore.sh` are zsh,
+and `deploy.sh` invokes `create-config.sh` through it), plus `yq` for reading
+`values.yaml`, and `keytool` and `openssl` for the trust store.
 
 ### Check certificates and chains
 
@@ -573,31 +723,54 @@ certificates and templates from the `config` folder, an alternate config folder
 location can be specified with the `-c` switch. Creating a chart config
 involves the following steps:
 
-* download all library charts
+* download the library charts with `helm dependency update`, then unpack them again for the applications that need a generated config folder
 * install certificates, chains and keys in a format suitable for the application deployed
 * copy the application specific configuration files to the library charts
 * create envoy configuration
   * use admin interface configuration from `envoy-head.yaml`
-  * add filter and cluster for nsi-safnari, nsi-dds and nsi-opennsa from `envoy-filter_chain_match.yaml` and `envoy-cluster.yaml`
+  * add filter and cluster for nsi-dds, nsi-safnari, nsi-opennsa, nsi-requester and polynsi from `envoy-filter_chain_match.yaml` and `envoy-cluster.yaml`
   * per application add SPKI of all trusted leaf certificates to filter
   * add application certificate, chain and key from `key` folder
   * create chain of acceptable CA's by combining the per application trusted chains
 * add nsi-safnari and nsi-opennsa `create-postgres-db.sh` script to postrgresql docker-entrypoint-initdb.d folder
 
-### Install or upgrade deployment
+### Create a Java trust store
 
-The `deploy.sh` script will run the `create-config.sh` script mentioned above,
-and will create all needed secrets, except for the postgres password. All
-secrets are stored in a per deployment specific k8s secret that uses a name
-based on the NSI-node chart deployment name: `<deployment name>-secret`. The
-postgres password must by past to the `deploy.sh` script via the
-`POSTGRES_PASSWORD` shell variable.  A CI based deployment can store the
-postgres password as a CI secret and have it passed to the deploy script when
-the deploy pipeline is being run.
+The `create-truststore.sh` script builds a JKS trust store for a single
+application from the certificates and chains in its `trust` folder, and writes
+it to `charts/<app>/<app>-truststore.jks`. Additional debug output can be
+enabled with the `-d` switch, and an alternate config folder with `-c`.
 
 ```shell
-POSTGRES_PASSWORD="secret password" ./deploy -d "deployment_name" -n "namespace" -c "config_folder"
+./create-truststore.sh -c "config_folder" nsi-safnari
 ```
+
+### Install or upgrade deployment
+
+The `deploy.sh` script runs the `create-config.sh` script mentioned above, then
+creates the Kubernetes objects the chart expects before installing it:
+
+* a per deployment secret named `<deployment name>-secret`, holding
+  `NSI_REQUESTER_APPLICATION_SECRET` and `SAFNARI_APPLICATION_SECRET` (both
+  freshly generated on every run) and `POSTGRES_PASSWORD`
+* a ConfigMap named `postgresql-init-scripts`, built from
+  `charts/postgresql/initdb.d/*`
+
+It then runs `helm upgrade --install --cleanup-on-fail --atomic --wait`, so a
+failed deploy is rolled back rather than left half-applied.
+
+The postgres password is not generated; it must be passed in through the
+`POSTGRES_PASSWORD` shell variable, which is used both for the secret and for
+`--set postgresql.auth.password`. A CI based deployment can store the postgres
+password as a CI secret and have it passed to the deploy script when the deploy
+pipeline is being run.
+
+```shell
+POSTGRES_PASSWORD="secret password" ./deploy.sh -d "deployment_name" -n "namespace" -c "config_folder"
+```
+
+Note that the application secrets are regenerated on every run, so each deploy
+restarts the pods that consume them.
 
 While upgrading the configuration of an exiting NSI-node deployment you can use
 the above command as well.

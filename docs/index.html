@@ -1,15 +1,59 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8"> 
+        <meta charset="UTF-8">
         <title>
-            Helm chart repository for BandwidthOnDemand/nsi-node
+            Helm chart repository for BandwidthOnDemand/nsi-node (frozen)
         </title>
     </head>
     <body>
         <h2>Helm chart repository for BandwidthOnDemand/nsi-node</h2>
 
-        Point Helm to this repository and update:
+        <h3>Frozen on 2026-08-20 &mdash; no new chart versions will be published here</h3>
+
+        <p>
+        Charts are now published as OCI artifacts by each source repository, on
+        every release tag. The chart version equals the application version
+        equals the git tag.
+        </p>
+
+        <pre>
+        oci://ghcr.io/workfloworchestrator/charts   ana-automation-ui, nsi-aggregator-proxy,
+                                                   nsi-aura, nsi-auth, nsi-dds-proxy,
+                                                   nsi-mgmt-info, nsi-orchestrator,
+                                                   nsi-orchestrator-ui, polynsi, supa
+        oci://ghcr.io/bandwidthondemand/charts     nsi-dds, nsi-pce, nsi-safnari
+        </pre>
+
+        <p>
+        No <code>helm repo add</code> is needed. Reference a chart directly:
+        </p>
+
+        <pre>
+        helm show chart oci://ghcr.io/workfloworchestrator/charts/nsi-orchestrator --version &lt;version&gt;
+        helm upgrade --install nsi-orchestrator \
+            oci://ghcr.io/workfloworchestrator/charts/nsi-orchestrator --version &lt;version&gt;
+        </pre>
+
+        <p>
+        In a <code>Chart.yaml</code> dependency, the repository is the namespace
+        without the chart name; the <code>"@nsi-node"</code> alias form does not
+        work for OCI:
+        </p>
+
+        <pre>
+        dependencies:
+          - name: nsi-dds
+            version: "&lt;version&gt;"
+            repository: "oci://ghcr.io/bandwidthondemand/charts"
+        </pre>
+
+        <p>
+        This index and its <code>.tgz</code> files are kept online indefinitely so
+        existing pinned versions keep resolving. Everything served from here is
+        the state as of the freeze date above; anything released later exists only
+        in the registries listed above.
+        </p>
 
         <pre>
         helm repo add nsi-node https://bandwidthondemand.github.io/nsi-node/
