@@ -2,30 +2,30 @@ apiVersion: v2
 name: nsi-node
 description: Deploy a Network Service Interface node
 type: application
-version: 0.2.0
+version: 0.3.0
 
 # Subcharts come from the GHCR OCI registries. The "@nsi-node" alias used before
 # pointed at the GitHub Pages repository, frozen on 2026-08-20 and receiving no
 # new versions; the alias form cannot express an OCI location.
 dependencies:
   - name: nsi-dds
-    version: "1.5.1"
+    version: "1.5.2"
     repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-dds.enabled
   - name: nsi-pce
-    version: "2.1.2"
+    version: "2.1.3"
     repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-pce.enabled
   - name: nsi-safnari
-    version: "3.2.2"
+    version: "3.2.4"
     repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-safnari.enabled
   - name: nsi-envoy
-    version: "1.2.1"
+    version: "1.2.2"
     repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-envoy.enabled
   - name: nsi-opennsa
-    version: "1.2.8"
+    version: "1.2.9"
     repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-opennsa.enabled
   - name: nsi-requester
@@ -33,15 +33,15 @@ dependencies:
     repository: "oci://ghcr.io/bandwidthondemand/charts"
     condition: nsi-requester.enabled
   - name: supa
-    version: "0.5.2"
+    version: "0.5.3"
     repository: "oci://ghcr.io/workfloworchestrator/charts"
     condition: supa.enabled
   - name: polynsi
-    version: "0.6.1"
+    version: "0.6.2"
     repository: "oci://ghcr.io/workfloworchestrator/charts"
     condition: polynsi.enabled
   - name: nsi-auth
-    version: "0.3.2"
+    version: "0.3.3"
     repository: "oci://ghcr.io/workfloworchestrator/charts"
     condition: nsi-auth.enabled
   - name: postgresql
